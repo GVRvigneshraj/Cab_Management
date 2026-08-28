@@ -1,0 +1,551 @@
+/* ============================================
+   GreenCab Enterprise - Google Apps Script Backend
+   ============================================
+   SETUP:
+   1. Google Sheets -> New spreadsheet
+   2. Extensions -> Apps Script
+   3. Delete all code, paste this entire file
+   4. Run setupSheets() once (accept permissions)
+   5. Deploy -> New deployment -> Web app
+      Execute as: Me
+      Who has access: Anyone
+   6. Copy URL -> paste in index.html CONFIG
+   ============================================ */
+
+var SS_ID = SpreadsheetApp.getActiveSpreadsheet().getId();
+
+function doGet(e) {
+  var action = e.parameter.action || '';
+  var result = {};
+  try {
+    if (action === 'getData') {
+      result = getData(e.parameter.userId, e.parameter.role);
+    } else if (action === 'ping') {
+      result = { success: true, message: 'Server is running' };
+    } else {
+      result = { success: false, error: 'Unknown action: ' + action };
+    }
+  } catch (err) {
+    result = { success: false, error: err.toString() };
+  }
+  return ContentService.createTextOutput(JSON.stringify(result))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+function doPost(e) {
+  var result = {};
+  try {
+    var data = {};
+    if (e.postData && e.postData.contents) {
+      data = JSON.parse(e.postData.contents);
+    }
+    var action = data.action || '';
+    
+    switch (action) {
+      case 'register': result = registerUser(data); break;
+      case 'login': result = loginUser(data); break;
+      case 'getData': result = getData(data.userId, data.role); break;
+      case 'addCar': result = addCar(data); break;
+      case 'updateCar': result = updateCar(data); break;
+      case 'updateCarStatus': result = updateCarStatus(data); break;
+      case 'startDuty': result = startDuty(data); break;
+      case 'endDuty': result = endDuty(data); break;
+      case 'giveAdvance': result = giveAdvance(data); break;
+      case 'settle': result = settleDriver(data); break;
+      case 'addFuel': result = addFuelEntry(data); break;
+      case 'addExpense': result = addExpenseEntry(data); break;
+      case 'updateProfile': result = updateProfile(data); break;
+      default: result = { success: false, error: 'Unknown action: ' + action };
+    }
+  } catch (err) {
+    result = { success: false, error: err.toString() };
+  }
+  return ContentService.createTextOutput(JSON.stringify(result))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+/* ============ SETUP ============ */
+function setupSheets() {
+  var ss = SpreadsheetApp.openById(SS_ID);
+  var sheets = {
+    'Users': ['id','name','email','password','role','phone','license','rating','totalTrips','totalEarnings','balance','status','ini','clr'],
+    'Cars': ['id','make','model','year','plate','color','fuel','status','driverPct','img','addedBy'],
+    'DutyHistory': ['id','driverId','carId','date','startKm','endKm','startFuel','endFuel','trips','fuelEntries','expenses','fines','totalEarnings','driverPct','driverGross','fuelCost','expensesAmt','finesAmt','driverNet','ownerShare','status','manualTripCount'],
+    'Advances': ['id','driverId','amount','desc','date','type'],
+    'Transactions': ['id','type','driverId','amount','desc','date'],
+    'Notifications': ['id','type','driverId','title','desc','time','read']
+  };
+  for (var name in sheets) {
+    var sheet = ss.getSheetByName(name);
+    if (!sheet) {
+      sheet = ss.insertSheet(name);
+      sheet.getRange(1, 1, 1, sheets[name].length).setValues([sheets[name]]);
+      sheet.setFrozenRows(1);
+    }
+  }
+  return ContentService.createTextOutput('Setup complete').setMimeType(ContentService.MimeType.TEXT);
+}
+
+/* ============ HELPERS ============ */
+function getSheetData(sheetName) {
+  var ss = SpreadsheetApp.openById(SS_ID);
+  var sheet = ss.getSheetByName(sheetName);
+  if (!sheet || sheet.getLastRow() <= 1) return [];
+  var data = sheet.getDataRange().getValues();
+  var headers = data[0];
+  var rows = [];
+  for (var i = 1; i < data.length; i++) {
+    var obj = {};
+    for (var j = 0; j < headers.length; j++) {
+      obj[headers[j]] = data[i][j] !== undefined ? data[i][j] : '';
+    }
+    rows.push(obj);
+  }
+  return rows;
+}
+
+function findRow(sheetName, columnName, value) {
+  var ss = SpreadsheetApp.openById(SS_ID);
+  var sheet = ss.getSheetByName(sheetName);
+  if (!sheet || sheet.getLastRow() <= 1) return null;
+  var data = sheet.getDataRange().getValues();
+  var headers = data[0];
+  var colIdx = -1;
+  for (var j = 0; j < headers.length; j++) {
+    if (headers[j] === columnName) { colIdx = j; break; }
+  }
+  if (colIdx === -1) return null;
+  for (var i = 1; i < data.length; i++) {
+    if (String(data[i][colIdx]) === String(value)) {
+      var obj = {};
+      for (var j = 0; j < headers.length; j++) {
+        obj[headers[j]] = data[i][j] !== undefined ? data[i][j] : '';
+      }
+      obj._row = i + 1;
+      return obj;
+    }
+  }
+  return null;
+}
+
+function addRow(sheetName, obj) {
+  var ss = SpreadsheetApp.openById(SS_ID);
+  var sheet = ss.getSheetByName(sheetName);
+  if (!sheet) return;
+  var headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+  var row = [];
+  for (var i = 0; i < headers.length; i++) {
+    var val = obj[headers[i]];
+    row.push(val !== undefined && val !== null ? val : '');
+  }
+  sheet.getRange(sheet.getLastRow() + 1, 1, 1, row.length).setValues([row]);
+}
+
+function updateRow(sheetName, rowNumber, obj) {
+  var ss = SpreadsheetApp.openById(SS_ID);
+  var sheet = ss.getSheetByName(sheetName);
+  if (!sheet) return;
+  var headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+  for (var i = 0; i < headers.length; i++) {
+    if (obj[headers[i]] !== undefined) {
+      sheet.getRange(rowNumber, i + 1).setValue(obj[headers[i]]);
+    }
+  }
+}
+
+function getNextId(sheetName) {
+  var data = getSheetData(sheetName);
+  var maxId = 0;
+  for (var i = 0; i < data.length; i++) {
+    var id = parseInt(data[i].id);
+    if (!isNaN(id) && id > maxId) maxId = id;
+  }
+  return maxId + 1;
+}
+
+/* ============ AUTH ============ */
+function registerUser(body) {
+  if (!body.name || !body.email || !body.password) {
+    return { success: false, error: 'Name, email and password required' };
+  }
+  var existing = findRow('Users', 'email', body.email);
+  if (existing) return { success: false, error: 'Email already registered' };
+  
+  var id = getNextId('Users');
+  var words = body.name.split(' ');
+  var ini = '';
+  for (var i = 0; i < Math.min(2, words.length); i++) {
+    if (words[i].length > 0) ini += words[i][0];
+  }
+  ini = ini.toUpperCase();
+  if (ini.length === 0 && body.name.length > 0) ini = body.name.substring(0,2).toUpperCase();
+  
+  var colors = ['#059669','#0891b2','#7c3aed','#dc2626','#ea580c','#2563eb','#db2777','#16a34a'];
+  var clr = colors[(id - 1) % colors.length];
+  
+  var user = {
+    id: id,
+    name: body.name,
+    email: body.email,
+    password: body.password,
+    role: body.role || 'driver',
+    phone: body.phone || '',
+    license: body.license || '',
+    rating: 5.0,
+    totalTrips: 0,
+    totalEarnings: 0,
+    balance: 0,
+    status: 'active',
+    ini: ini,
+    clr: clr
+  };
+  
+  addRow('Users', user);
+  return { success: true, user: sanitizeUser(user) };
+}
+
+function loginUser(body) {
+  if (!body.email || !body.password) {
+    return { success: false, error: 'Email and password required' };
+  }
+  var user = findRow('Users', 'email', body.email);
+  if (!user) return { success: false, error: 'User not found with this email' };
+  if (String(user.password) !== String(body.password)) return { success: false, error: 'Wrong password' };
+  return { success: true, user: sanitizeUser(user) };
+}
+
+function sanitizeUser(user) {
+  var copy = {};
+  for (var k in user) {
+    if (k !== 'password' && k !== '_row') copy[k] = user[k];
+  }
+  return copy;
+}
+
+/* ============ GET DATA ============ */
+function getData(userId, role) {
+  var users = getSheetData('Users');
+  var cars = getSheetData('Cars');
+  var duties = getSheetData('DutyHistory');
+  var advances = getSheetData('Advances');
+  var transactions = getSheetData('Transactions');
+  var notifications = getSheetData('Notifications');
+  
+  for (var i = 0; i < duties.length; i++) {
+    try { duties[i].trips = JSON.parse(duties[i].trips || '[]'); } catch(e) { duties[i].trips = []; }
+    try { duties[i].fuelEntries = JSON.parse(duties[i].fuelEntries || '[]'); } catch(e) { duties[i].fuelEntries = []; }
+    try { duties[i].expenses = JSON.parse(duties[i].expenses || '[]'); } catch(e) { duties[i].expenses = []; }
+    try { duties[i].fines = JSON.parse(duties[i].fines || '[]'); } catch(e) { duties[i].fines = []; }
+    duties[i].totalEarnings = parseFloat(duties[i].totalEarnings) || 0;
+    duties[i].driverPct = parseFloat(duties[i].driverPct) || 0;
+    duties[i].driverGross = parseFloat(duties[i].driverGross) || 0;
+    duties[i].fuelCost = parseFloat(duties[i].fuelCost) || 0;
+    duties[i].expensesAmt = parseFloat(duties[i].expensesAmt) || 0;
+    duties[i].finesAmt = parseFloat(duties[i].finesAmt) || 0;
+    duties[i].driverNet = parseFloat(duties[i].driverNet) || 0;
+    duties[i].ownerShare = parseFloat(duties[i].ownerShare) || 0;
+    duties[i].manualTripCount = parseInt(duties[i].manualTripCount) || 0;
+  }
+  
+  for (var i = 0; i < users.length; i++) {
+    users[i].rating = parseFloat(users[i].rating) || 0;
+    users[i].totalTrips = parseInt(users[i].totalTrips) || 0;
+    users[i].totalEarnings = parseFloat(users[i].totalEarnings) || 0;
+    users[i].balance = parseFloat(users[i].balance) || 0;
+  }
+  
+  for (var i = 0; i < cars.length; i++) {
+    cars[i].driverPct = parseFloat(cars[i].driverPct) || 0;
+    cars[i].year = parseInt(cars[i].year) || 0;
+  }
+  
+  for (var i = 0; i < advances.length; i++) {
+    advances[i].amount = parseFloat(advances[i].amount) || 0;
+  }
+  
+  for (var i = 0; i < transactions.length; i++) {
+    transactions[i].amount = parseFloat(transactions[i].amount) || 0;
+  }
+  
+  var drivers = users.filter(function(u) { return u.role === 'driver'; });
+  
+  return {
+    success: true,
+    drivers: drivers,
+    cars: cars,
+    dutyHistory: duties,
+    advances: advances,
+    transactions: transactions,
+    notifications: notifications
+  };
+}
+
+/* ============ CARS ============ */
+function addCar(body) {
+  if (!body.make || !body.plate) return { success: false, error: 'Make and plate required' };
+  var id = getNextId('Cars');
+  var car = {
+    id: id,
+    make: body.make || '',
+    model: body.model || '',
+    year: body.year || '',
+    plate: body.plate || '',
+    color: body.color || '',
+    fuel: body.fuel || 'Petrol',
+    status: 'available',
+    driverPct: parseFloat(body.driverPct) || 35,
+    img: 'https://picsum.photos/seed/gc' + id + '/400/240',
+    addedBy: body.addedBy || ''
+  };
+  addRow('Cars', car);
+  return { success: true, car: car };
+}
+
+function updateCar(body) {
+  var row = findRow('Cars', 'id', body.id);
+  if (!row) return { success: false, error: 'Car not found' };
+  var update = {};
+  if (body.driverPct !== undefined) update.driverPct = parseFloat(body.driverPct);
+  updateRow('Cars', row._row, update);
+  return { success: true };
+}
+
+function updateCarStatus(body) {
+  var row = findRow('Cars', 'id', body.id);
+  if (!row) return { success: false, error: 'Car not found' };
+  updateRow('Cars', row._row, { status: body.status });
+  return { success: true };
+}
+
+/* ============ DUTY ============ */
+function startDuty(body) {
+  var id = getNextId('DutyHistory');
+  var duty = {
+    id: id,
+    driverId: body.driverId,
+    carId: body.carId,
+    date: new Date().toISOString().split('T')[0],
+    startKm: body.startKm,
+    endKm: '',
+    startFuel: body.startFuel,
+    endFuel: '',
+    trips: '[]',
+    fuelEntries: '[]',
+    expenses: '[]',
+    fines: '[]',
+    totalEarnings: 0,
+    driverPct: parseFloat(body.driverPct) || 35,
+    driverGross: 0,
+    fuelCost: 0,
+    expensesAmt: 0,
+    finesAmt: 0,
+    driverNet: 0,
+    ownerShare: 0,
+    status: 'pending',
+    manualTripCount: 0
+  };
+  addRow('DutyHistory', duty);
+  
+  var carRow = findRow('Cars', 'id', body.carId);
+  if (carRow) updateRow('Cars', carRow._row, { status: 'on-duty' });
+  
+  return { success: true, dutyId: id };
+}
+
+function endDuty(body) {
+  var row = findRow('DutyHistory', 'id', body.id);
+  if (!row) return { success: false, error: 'Duty not found' };
+  
+  var totalEarnings = parseFloat(body.totalEarnings) || 0;
+  var driverPct = parseFloat(body.driverPct) || parseFloat(row.driverPct) || 35;
+  var driverGross = Math.round(totalEarnings * driverPct / 100);
+  var fuelCost = parseFloat(body.fuelCost) || 0;
+  var expensesAmt = parseFloat(body.expensesAmt) || 0;
+  var finesAmt = parseFloat(body.finesAmt) || 0;
+  var driverNet = driverGross - fuelCost - expensesAmt - finesAmt;
+  var ownerShare = totalEarnings - driverGross;
+  
+  var update = {
+    endKm: body.endKm || '',
+    endFuel: body.endFuel || '',
+    trips: JSON.stringify(body.trips || []),
+    fuelEntries: JSON.stringify(body.fuelEntries || []),
+    expenses: JSON.stringify(body.expenses || []),
+    fines: JSON.stringify(body.fines || []),
+    totalEarnings: totalEarnings,
+    driverPct: driverPct,
+    driverGross: driverGross,
+    fuelCost: fuelCost,
+    expensesAmt: expensesAmt,
+    finesAmt: finesAmt,
+    driverNet: driverNet,
+    ownerShare: ownerShare,
+    status: 'pending',
+    manualTripCount: parseInt(body.manualTripCount) || 0
+  };
+  
+  updateRow('DutyHistory', row._row, update);
+  
+  var carRow = findRow('Cars', 'id', row.carId);
+  if (carRow) updateRow('Cars', carRow._row, { status: 'available' });
+  
+  var driverRow = findRow('Users', 'id', row.driverId);
+  if (driverRow) {
+    updateRow('Users', driverRow._row, {
+      totalTrips: (parseInt(driverRow.totalTrips) || 0) + (parseInt(body.manualTripCount) || 0),
+      totalEarnings: (parseFloat(driverRow.totalEarnings) || 0) + totalEarnings
+    });
+  }
+  
+  addRow('Transactions', {
+    id: getNextId('Transactions'),
+    type: 'earning',
+    driverId: row.driverId,
+    amount: totalEarnings,
+    desc: 'Duty earnings',
+    date: new Date().toISOString().split('T')[0]
+  });
+  
+  return { success: true };
+}
+
+/* ============ ADVANCE ============ */
+function giveAdvance(body) {
+  if (!body.driverId || !body.amount) return { success: false, error: 'Driver and amount required' };
+  var amt = parseFloat(body.amount);
+  if (amt <= 0) return { success: false, error: 'Amount must be positive' };
+  
+  var id = getNextId('Advances');
+  addRow('Advances', {
+    id: id,
+    driverId: body.driverId,
+    amount: amt,
+    desc: body.desc || 'Advance given',
+    date: new Date().toISOString().split('T')[0],
+    type: 'advance'
+  });
+  
+  var driverRow = findRow('Users', 'id', body.driverId);
+  if (driverRow) {
+    updateRow('Users', driverRow._row, {
+      balance: (parseFloat(driverRow.balance) || 0) - amt
+    });
+  }
+  
+  addRow('Transactions', {
+    id: getNextId('Transactions'),
+    type: 'advance',
+    driverId: body.driverId,
+    amount: -amt,
+    desc: body.desc || 'Advance given',
+    date: new Date().toISOString().split('T')[0]
+  });
+  
+  return { success: true };
+}
+
+/* ============ SETTLE ============ */
+function settleDriver(body) {
+  if (!body.driverId) return { success: false, error: 'Driver required' };
+  var driverRow = findRow('Users', 'id', body.driverId);
+  if (!driverRow) return { success: false, error: 'Driver not found' };
+  
+  var amt = parseFloat(body.amount) || 0;
+  
+  var duties = getSheetData('DutyHistory');
+  var ss = SpreadsheetApp.openById(SS_ID);
+  var sheet = ss.getSheetByName('DutyHistory');
+  var headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+  var statusCol = headers.indexOf('status') + 1;
+  var driverIdCol = headers.indexOf('driverId') + 1;
+  
+  var settledCount = 0;
+  for (var i = 0; i < duties.length; i++) {
+    if (String(duties[i].driverId) === String(body.driverId) && duties[i].status === 'pending') {
+      sheet.getRange(i + 2, statusCol).setValue('settled');
+      settledCount++;
+    }
+  }
+  
+  updateRow('Users', driverRow._row, {
+    balance: (parseFloat(driverRow.balance) || 0) + amt
+  });
+  
+  addRow('Transactions', {
+    id: getNextId('Transactions'),
+    type: 'settlement',
+    driverId: body.driverId,
+    amount: amt,
+    desc: 'Settled ' + settledCount + ' duties' + (body.notes ? ' - ' + body.notes : ''),
+    date: new Date().toISOString().split('T')[0]
+  });
+  
+  addRow('Notifications', {
+    id: getNextId('Notifications'),
+    type: 'settlement',
+    driverId: body.driverId,
+    title: 'Settlement Received',
+    desc: 'Owner settled Rs.' + amt + ' for ' + settledCount + ' duties',
+    time: 'Just now',
+    read: false
+  });
+  
+  return { success: true };
+}
+
+/* ============ FUEL & EXPENSE ============ */
+function addFuelEntry(body) {
+  var row = findRow('DutyHistory', 'id', body.dutyId);
+  if (!row) return { success: false, error: 'Duty not found' };
+  
+  var entries = [];
+  try { entries = JSON.parse(row.fuelEntries || '[]'); } catch(e) { entries = []; }
+  entries.push({ liters: parseFloat(body.liters) || 0, cost: parseFloat(body.cost) || 0, station: body.station || '' });
+  
+  var totalFuelCost = 0;
+  for (var i = 0; i < entries.length; i++) totalFuelCost += entries[i].cost;
+  
+  updateRow('DutyHistory', row._row, {
+    fuelEntries: JSON.stringify(entries),
+    fuelCost: totalFuelCost
+  });
+  
+  return { success: true };
+}
+
+function addExpenseEntry(body) {
+  var row = findRow('DutyHistory', 'id', body.dutyId);
+  if (!row) return { success: false, error: 'Duty not found' };
+  
+  var isFine = String(body.type).indexOf('Fine') !== -1;
+  if (isFine) {
+    var fines = [];
+    try { fines = JSON.parse(row.fines || '[]'); } catch(e) { fines = []; }
+    fines.push({ type: body.type, amount: parseFloat(body.amount) || 0, desc: body.desc || '' });
+    var totalFines = 0;
+    for (var i = 0; i < fines.length; i++) totalFines += fines[i].amount;
+    updateRow('DutyHistory', row._row, { fines: JSON.stringify(fines), finesAmt: totalFines });
+  } else {
+    var expenses = [];
+    try { expenses = JSON.parse(row.expenses || '[]'); } catch(e) { expenses = []; }
+    expenses.push({ type: body.type, amount: parseFloat(body.amount) || 0, desc: body.desc || '' });
+    var totalExp = 0;
+    for (var i = 0; i < expenses.length; i++) totalExp += expenses[i].amount;
+    updateRow('DutyHistory', row._row, { expenses: JSON.stringify(expenses), expensesAmt: totalExp });
+  }
+  
+  return { success: true };
+}
+
+/* ============ PROFILE ============ */
+function updateProfile(body) {
+  if (!body.userId) return { success: false, error: 'User ID required' };
+  var row = findRow('Users', 'id', body.userId);
+  if (!row) return { success: false, error: 'User not found' };
+  var update = {};
+  if (body.name) update.name = body.name;
+  if (body.phone) update.phone = body.phone;
+  if (body.license) update.license = body.license;
+  updateRow('Users', row._row, update);
+  return { success: true };
+}

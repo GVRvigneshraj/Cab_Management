@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>GreenCab Enterprise</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);min-height:100vh;min-height:100dvh;overflow:hidden}
+:root{--p:#4f6ef7;--pd:#3b54c4;--pdd:#2d3fa0;--pdp:#1e2d7a;--pl:#818cf8;--plr:#a5b4fc;--pbg:#eef2ff;--psf:#c7d2fe;--ac:#f59e0b;--acl:#fef3c7;--dn:#ef4444;--dnl:#fee2e2;--bg:#f1f5f9;--cd:#fff;--tx:#1e293b;--t2:#475569;--tm:#94a3b8;--bd:#e2e8f0}
+.ph{width:100%;height:100vh;height:100dvh;background:var(--bg);overflow:hidden;position:relative}
+.notch{display:none}
+.sb{height:54px;padding:14px 28px 0;display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:600;color:var(--tx);position:relative;z-index:50;transition:color .3s}
+.sb.w{color:#fff}
+.sc{position:absolute;top:54px;left:0;right:0;bottom:0;overflow:hidden}
+.sr{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;transition:transform .32s cubic-bezier(.4,0,.2,1),opacity .32s;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.sr::-webkit-scrollbar{display:none}
+.sr.on{transform:translateX(0);opacity:1;z-index:10}
+.sr.lt{transform:translateX(-30%);opacity:0;z-index:5}
+.sr.rt{transform:translateX(100%);opacity:0;z-index:5}
+.bn{position:absolute;bottom:0;left:0;right:0;height:72px;background:var(--cd);border-top:1px solid var(--bd);display:none;align-items:flex-start;padding-top:6px;z-index:50}
+.bn.v{display:flex}
+.ni{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;padding:4px 0;position:relative}
+.ni .material-icons-round{font-size:24px;color:var(--tm);transition:color .2s}
+.ni span{font-size:10px;font-weight:600;color:var(--tm);transition:color .2s}
+.ni.a .material-icons-round,.ni.a span{color:var(--p)}
+.nd{width:8px;height:8px;background:var(--dn);border-radius:50%;position:absolute;top:0;right:calc(50% - 18px);border:2px solid var(--cd)}
+.bp{width:100%;height:52px;background:linear-gradient(135deg,var(--p),var(--pd));color:#fff;border:none;border-radius:14px;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;transition:all .15s;box-shadow:0 4px 14px rgba(79,110,247,.3);display:flex;align-items:center;justify-content:center;gap:8px}
+.bp:active{transform:scale(.97)}
+.bp.dn{background:linear-gradient(135deg,var(--dn),#b91c1c);box-shadow:0 4px 14px rgba(239,68,68,.3)}
+.bs{width:100%;height:48px;background:var(--pbg);color:var(--pd);border:1.5px solid var(--psf);border-radius:12px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;transition:all .15s}
+.bs:active{background:var(--psf)}
+.bsm{height:36px;padding:0 16px;border-radius:10px;font-size:13px;font-weight:600;border:none;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:4px;transition:all .15s}
+.bsm:active{transform:scale(.96)}
+.bsm.g{background:var(--p);color:#fff}
+.bsm.ol{background:transparent;border:1.5px solid var(--p);color:var(--p)}
+.cd{background:var(--cd);border-radius:16px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,.04);border:1px solid var(--bd)}
+.bg{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700}
+.bg.gn{background:#ecfdf5;color:#047857}
+.bg.am{background:#fef3c7;color:#92400e}
+.bg.rd{background:#fee2e2;color:#dc2626}
+.bg.gy{background:#f1f5f9;color:#64748b}
+.bg.bl{background:#dbeafe;color:#1e40af}
+.tst{position:absolute;top:60px;left:16px;right:16px;padding:14px 16px;border-radius:12px;font-size:13px;font-weight:600;z-index:200;transform:translateY(-120%);transition:transform .35s cubic-bezier(.4,0,.2,1);display:flex;align-items:center;gap:10px;cursor:pointer}
+.tst.sh{transform:translateY(0)}
+.tst.ok{background:#047857;color:#fff}
+.tst.er{background:#991b1b;color:#fff}
+.tst.in{background:#1e3a5f;color:#fff}
+.tst .tc{margin-left:auto;opacity:.7;font-size:18px;flex-shrink:0}
+.tst .tc:hover{opacity:1}
+.ig{position:relative;margin-bottom:14px}
+.ig label{display:block;font-size:12px;font-weight:600;color:var(--t2);margin-bottom:6px}
+.ig input,.ig select{width:100%;height:48px;border:1.5px solid var(--bd);border-radius:12px;padding:0 44px 0 16px;font-size:14px;font-family:inherit;color:var(--tx);background:var(--cd);transition:border-color .2s,box-shadow .2s;outline:none}
+.ig input:focus,.ig select:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(79,110,247,.12)}
+.ig .ii{position:absolute;right:14px;top:calc(50% + 10px);transform:translateY(-50%);color:var(--tm);font-size:20px;pointer-events:none}
+.rt{display:flex;background:var(--pbg);border-radius:12px;padding:4px;gap:4px}
+.rt button{flex:1;height:44px;border:none;border-radius:10px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;transition:all .25s;background:transparent;color:var(--t2)}
+.rt button.a{background:var(--p);color:#fff;box-shadow:0 2px 8px rgba(79,110,247,.3)}
+.pb{height:6px;background:var(--psf);border-radius:3px;overflow:hidden}
+.pb .fl{height:100%;background:linear-gradient(90deg,var(--p),var(--pl));border-radius:3px;transition:width .5s}
+.li{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid #f1f5f9;cursor:pointer}
+.li:last-child{border-bottom:none}
+.avc{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;color:#fff;flex-shrink:0}
+.gh{background:linear-gradient(135deg,#2d3fa0 0%,#3b54c4 40%,#4f6ef7 100%);color:#fff;position:relative;overflow:hidden}
+.gh::before{content:'';position:absolute;top:-40%;right:-20%;width:200px;height:200px;background:rgba(255,255,255,.08);border-radius:50%}
+.gh::after{content:'';position:absolute;bottom:-30%;left:-10%;width:150px;height:150px;background:rgba(255,255,255,.05);border-radius:50%}
+@keyframes fiu{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes sgr{0%,100%{box-shadow:0 0 0 0 rgba(79,110,247,.35)}70%{box-shadow:0 0 0 12px rgba(79,110,247,0)}}
+.ai{animation:fiu .4s ease forwards}
+.ai2{animation:fiu .4s ease .08s forwards;opacity:0}
+.ai3{animation:fiu .4s ease .16s forwards;opacity:0}
+.ai4{animation:fiu .4s ease .24s forwards;opacity:0}
+.prs{animation:sgr 2s infinite}
+.sw{width:48px;height:26px;background:#cbd5e1;border-radius:13px;position:relative;cursor:pointer;transition:background .25s;flex-shrink:0}
+.sw.on{background:var(--p)}
+.sw::after{content:'';width:22px;height:22px;background:#fff;border-radius:50%;position:absolute;top:2px;left:2px;transition:transform .25s;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.sw.on::after{transform:translateX(22px)}
+@media(min-width:768px){
+body{background:linear-gradient(135deg,#c7d2fe 0%,#e0e7ff 50%,#ede9fe 100%)}
+.ph{max-width:480px;margin:0 auto;height:100vh;height:100dvh;border-radius:24px;box-shadow:0 20px 60px rgba(0,0,0,.12),0 0 0 1px rgba(0,0,0,.05)}
+}
+@media(max-width:767px){
+.sb{height:env(safe-area-inset-top,48px);padding-top:env(safe-area-inset-top,10px)}.sc{top:env(safe-area-inset-top,48px)}.bn{height:calc(72px + env(safe-area-inset-bottom,0px));padding-bottom:env(safe-area-inset-bottom,0px)}
+}
+</style>
+</head>
+<body>
+<div class="ph" id="ph">
+<div class="sb" id="sb"><span>9:41</span><div style="display:flex;gap:5px;align-items:center"><span class="material-icons-round" style="font-size:15px">signal_cellular_alt</span><span class="material-icons-round" style="font-size:15px">wifi</span><span class="material-icons-round" style="font-size:15px">battery_full</span></div></div>
+<div class="sc" id="sc"><div class="sr on" id="sA"></div><div class="sr rt" id="sB"></div></div>
+<div class="bn" id="bn"></div>
+<div class="tst" id="tst"></div>
+</div>
+<script>
+/* ============ CONFIG ============ */
+var API_URL='https://script.google.com/macros/s/AKfycbxX07yYy5yVHC8vchmDCFRD2Wry0S7htRsvJDQrr4Vvdl7UZVIGlXQWaRmeninQoNwk/exec';
+
+/* ============ API HELPER ============ */
+function apiCall(action,data){
+var payload=Object.assign({action:action},data||{});
+return fetch(API_URL,{method:'POST',redirect:'follow',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify(payload)})
+.then(function(r){return r.text()}).then(function(t){try{return JSON.parse(t)}catch(e){return{success:false,error:'Invalid server response'}}})
+.catch(function(e){return{success:false,error:'Network error: '+e.toString()}});
+}
+function apiGet(params){
+var qs=Object.keys(params).map(function(k){return k+'='+encodeURIComponent(params[k])}).join('&');
+return fetch(API_URL+'?'+qs).then(function(r){return r.json()}).catch(function(e){return{success:false,error:e.toString()}});
+}
+
+/* ============ DATA ============ */
+var D = {
+cars:[],
+drivers:[],
+dutyHistory:[],
+notifications:[],
+advances:[],
+transactions:[]
+};
+
+/* ============ STATE ============ */
+var S = {
+role:'driver', screen:'welcome', hist:[], user:null,
+notifOn:false,
+dutyOn:false, duty:null,
+_viewCarId:null, _viewDrvId:null, _settleDrvId:null, _lastReport:null,
+_giveAdvDrvId:null
+};
+
+/* ============ LOAD DATA FROM API ============ */
+function loadData(){
+if(!S.user)return Promise.resolve();
+return apiCall('getData',{userId:S.user.id,role:S.role}).then(function(r){
+if(r.success){
+D.drivers=r.drivers||[];
+D.cars=r.cars||[];
+D.dutyHistory=r.dutyHistory||[];
+D.advances=r.advances||[];
+D.transactions=r.transactions||[];
+D.notifications=r.notifications||[];
+}
+return r;
+});
+}
+
+/* ============ SESSION ============ */
+function saveSession(){
+try{localStorage.setItem('gc_user',JSON.stringify(S.user));localStorage.setItem('gc_role',S.role)}catch(e){}
+}
+function loadSession(){
+try{var u=localStorage.getItem('gc_user');var r=localStorage.getItem('gc_role');if(u){S.user=JSON.parse(u);S.role=r||'driver';return true}}catch(e){}
+return false;
+}
+function clearSession(){
+try{localStorage.removeItem('gc_user');localStorage.removeItem('gc_role')}catch(e){}
+}
+
+/* ============ NAV ============ */
+var sA=document.getElementById('sA'),sB=document.getElementById('sB');
+var layer='A';
+function nav(id,push){
+if(typeof push==='undefined')push=true;
+if(push&&S.screen!==id)S.hist.push(S.screen);
+S.screen=id;
+var h=renderScreen(id);
+var ent=layer==='A'?sB:sA;
+var lev=layer==='A'?sA:sB;
+ent.innerHTML=h;
+ent.className='sr rt';
+lev.className='sr lt';
+requestAnimationFrame(function(){ent.className='sr on';layer=layer==='A'?'B':'A'});
+uNav(id);uBN(id);ent.scrollTop=0;
+}
+function back(){
+if(!S.hist.length)return;
+var p=S.hist.pop();S.screen=p;
+var h=renderScreen(p);
+var ent=layer==='A'?sB:sA;
+var lev=layer==='A'?sA:sB;
+ent.innerHTML=h;
+ent.className='sr lt';
+lev.className='sr rt';
+requestAnimationFrame(function(){ent.className='sr on';layer=layer==='A'?'B':'A'});
+uNav(p);uBN(p);
+}
+function uNav(id){document.getElementById('sb').className='sb'+(id==='welcome'?' w':'')}
+function uBN(id){
+var bn=document.getElementById('bn');
+var auth=['welcome','login','registerDriver','registerOwner'];
+if(auth.indexOf(id)!==-1||!S.user){bn.classList.remove('v');return}
+bn.classList.add('v');
+var tabs;
+if(S.role==='driver'){
+tabs=[{i:'driverDash',ic:'dashboard',l:'Home'},{i:'activeDuty',ic:'route',l:'Duty'},{i:'earningsDriver',ic:'account_balance_wallet',l:'Earnings'},{i:'profile',ic:'person',l:'Profile'}];
+}else{
+tabs=[{i:'ownerDash',ic:'dashboard',l:'Home'},{i:'vehicleList',ic:'directions_car',l:'Fleet'},{i:'driverList',ic:'people',l:'Drivers'},{i:'revenueOwner',ic:'attach_money',l:'Revenue'},{i:'profile',ic:'person',l:'Profile'}];
+}
+var unread=S.notifOn?D.notifications.filter(function(n){return!n.read}).length:0;
+var html='';
+for(var t=0;t<tabs.length;t++){
+var tb=tabs[t];
+var cls='ni'+(S.screen===tb.i?' a':'');
+var dot=tb.i==='notifScreen'&&unread>0?'<div class="nd"></div>':'';
+html+='<div class="'+cls+'" onclick="nav(\''+tb.i+'\',false)">'+dot+'<span class="material-icons-round">'+tb.ic+'</span><span>'+tb.l+'</span></div>';
+}
+bn.innerHTML=html;
+}
+var _toastTimer=null;
+function toast(m,t){
+if(!t)t='ok';
+var e=document.getElementById('tst');
+var ic={ok:'check_circle',er:'error',in:'info'};
+e.className='tst '+t;
+e.innerHTML='<span class="material-icons-round" style="font-size:20px">'+ic[t]+'</span><span>'+m+'</span><span class="material-icons-round tc" onclick="closeToast()">close</span>';
+requestAnimationFrame(function(){e.classList.add('sh')});
+if(_toastTimer)clearTimeout(_toastTimer);
+_toastTimer=setTimeout(function(){closeToast()},2000);
+}
+function closeToast(){
+var e=document.getElementById('tst');
+e.classList.remove('sh');
+if(_toastTimer){clearTimeout(_toastTimer);_toastTimer=null}
+}
+
+/* ============ HELPERS ============ */
+function getCar(id){for(var i=0;i<D.cars.length;i++){if(String(D.cars[i].id)===String(id))return D.cars[i]}return null}
+function getDriver(id){for(var i=0;i<D.drivers.length;i++){if(String(D.drivers[i].id)===String(id))return D.drivers[i]}return null}
+function fmt(n){return '\u20B9'+Number(n).toLocaleString('en-IN')}
+function dutyCalc(){
+var d=S.duty;if(!d)return null;
+var te=0;for(var i=0;i<d.trips.length;i++)te+=d.trips[i].fare;
+var fc=0;for(var i=0;i<d.fuelEntries.length;i++)fc+=d.fuelEntries[i].cost;
+var ex=0;for(var i=0;i<d.expenses.length;i++)ex+=d.expenses[i].amount;
+var fn=0;for(var i=0;i<d.fines.length;i++)fn+=d.fines[i].amount;
+var car=getCar(d.carId);if(!car)return null;
+var dg=Math.round(te*car.driverPct/100);
+var os=te-dg;
+var dn=dg-fc-ex-fn;
+return{totalEarnings:te,fuelCost:fc,expenses:ex,fines:fn,driverPct:car.driverPct,driverGross:dg,ownerShare:os,driverNet:dn};
+}
+
+/* ============ RENDER MAP (FIXED) ============ */
+function renderScreen(id){
+var m={
+welcome:rWelcome,login:rLogin,registerDriver:rRegDrv,registerOwner:rRegOwn,
+driverDash:rDrvDash,startDuty:rStartDuty,activeDuty:rActiveDuty,
+addFuel:rAddFuel,addExpense:rAddExp,endDuty:rEndDuty,
+dutyReport:rDutyReport,earningsDriver:rDrvEarn,notifScreen:rNotif,profile:rProfile,
+ownerDash:rOwnDash,vehicleList:rVehList,carDetailOwn:rCarOwn,addCar:rAddCar,
+carSettings:rCarSet,driverList:rDrvList,drvDetailOwn:rDrvOwn,settleDriver:rSettle,
+revenueOwner:rRevenueOwner,serviceManage:rServiceManage,
+giveAdvance:rGiveAdvance,advanceHistory:rAdvanceHistory,recentActivity:rRecentActivity
+};
+var fn=m[id];
+if(fn)return fn();
+return rWelcome();
+}
+
+/* --- WELCOME --- */
+function rWelcome(){
+return'<div style="height:100%;background:linear-gradient(160deg,#1e2d7a 0%,#3b54c4 35%,#4f6ef7 65%,#818cf8 100%);display:flex;flex-direction:column;justify-content:space-between;padding:40px 28px 48px;position:relative;overflow:hidden"><div style="position:absolute;top:-60px;right:-60px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,.08)"></div><div style="position:absolute;bottom:-40px;left:-40px;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,.05)"></div><div class="ai" style="position:relative;z-index:2"><div style="width:72px;height:72px;background:rgba(255,255,255,.12);backdrop-filter:blur(10px);border-radius:20px;display:flex;align-items:center;justify-content:center;margin-bottom:32px;border:1px solid rgba(255,255,255,.15)"><span class="material-icons-round" style="font-size:36px;color:#fff">local_taxi</span></div><h1 style="font-size:34px;font-weight:900;color:#fff;line-height:1.15;margin-bottom:12px">GreenCab</h1><p style="font-size:15px;color:rgba(255,255,255,.7);line-height:1.6;max-width:280px">Enterprise Fleet Management \u2014 Simple. Fast. Efficient.</p></div><div class="ai2" style="position:relative;z-index:2"><button class="bp" style="height:56px;font-size:16px;border-radius:16px;background:rgba(255,255,255,.95);color:#1e2d7a;box-shadow:0 8px 24px rgba(0,0,0,.15)" onclick="nav(\'login\')">Get Started <span class="material-icons-round" style="font-size:20px">arrow_forward</span></button><p style="text-align:center;font-size:12px;color:rgba(255,255,255,.45);margin-top:14px">Complete Fleet Control at Your Fingertips</p></div></div>';
+}
+
+/* --- LOGIN --- */
+function rLogin(){
+return'<div style="padding:8px 20px 100px"><div class="ai" style="margin-bottom:24px"><button onclick="back()" style="background:none;border:none;cursor:pointer"><span class="material-icons-round" style="font-size:24px;color:var(--tx)">arrow_back</span></button></div><div class="ai2"><h2 style="font-size:26px;font-weight:900;color:var(--tx);margin-bottom:4px">Welcome Back</h2><p style="font-size:14px;color:var(--t2);margin-bottom:24px">Sign in to your account</p><div class="rt" style="margin-bottom:24px"><button class="'+(S.role==='driver'?'a':'')+'" onclick="S.role=\'driver\';nav(\'login\',false)"><span class="material-icons-round" style="font-size:18px;vertical-align:middle;margin-right:4px">drive_eta</span>Driver</button><button class="'+(S.role==='owner'?'a':'')+'" onclick="S.role=\'owner\';nav(\'login\',false)"><span class="material-icons-round" style="font-size:18px;vertical-align:middle;margin-right:4px">business</span>Owner</button></div><div class="ig"><label>Email</label><input type="email" id="le" placeholder="you@example.com"><span class="material-icons-round ii">mail</span></div><div class="ig"><label>Password</label><input type="password" id="lp" placeholder="Enter password"><span class="material-icons-round ii">lock</span></div><div style="text-align:right;margin-bottom:24px"><a href="#" onclick="toast(\'Reset link sent\',\'in\');return false" style="font-size:13px;font-weight:600;color:var(--pd);text-decoration:none">Forgot Password?</a></div><button class="bp" onclick="doLogin()">LOGIN</button><div style="text-align:center;margin-top:20px"><span style="font-size:13px;color:var(--tm)">New here? </span><a href="#" onclick="nav(\'register'+(S.role==='driver'?'Driver':'Owner')+'\');return false" style="font-size:13px;font-weight:700;color:var(--pd);text-decoration:none">Register</a></div></div></div>';
+}
+function doLogin(){
+var eEl=document.getElementById('le'),pEl=document.getElementById('lp');
+var e=eEl?eEl.value.trim():'',p=pEl?pEl.value.trim():'';
+if(!e||!p){toast('Fill all fields','er');return}
+toast('Logging in...','in');
+apiCall('login',{email:e,password:p,role:S.role}).then(function(r){
+if(!r.success){toast(r.error||'Login failed','er');return null}
+S.user=r.user;
+saveSession();
+return loadData();
+}).then(function(r){
+if(!r)return;
+toast('Welcome back!','ok');
+setTimeout(function(){nav(S.role==='driver'?'driverDash':'ownerDash')},400);
+}).catch(function(err){
+toast('Login failed: '+err.toString(),'er');
+});
+}
+
+/* --- REGISTER DRIVER --- */
+function rRegDrv(){
+return'<div style="padding:8px 20px 100px"><div class="ai"><button onclick="back()" style="background:none;border:none;cursor:pointer"><span class="material-icons-round" style="font-size:24px;color:var(--tx)">arrow_back</span></button></div><div class="ai2"><h2 style="font-size:24px;font-weight:900;color:var(--tx);margin-bottom:4px">Driver Registration</h2><p style="font-size:13px;color:var(--t2);margin-bottom:20px">Create your driver account</p><div class="ig"><label>Full Name</label><input type="text" id="regDrvName" placeholder="Enter full name"><span class="material-icons-round ii">person</span></div><div class="ig"><label>Email</label><input type="email" id="regDrvEmail" placeholder="you@example.com"><span class="material-icons-round ii">mail</span></div><div class="ig"><label>Phone</label><input type="tel" id="regDrvPhone" placeholder="+91 XXXXX XXXXX"><span class="material-icons-round ii">phone</span></div><div class="ig"><label>License Number</label><input type="text" id="regDrvLic" placeholder="DL-XXXXXXXXXX"><span class="material-icons-round ii">badge</span></div><div class="ig"><label>Password</label><input type="password" id="regDrvPass" placeholder="Min 8 characters"><span class="material-icons-round ii">lock</span></div><div style="display:flex;align-items:center;gap:8px;margin-bottom:20px"><input type="checkbox" style="accent-color:var(--p)"><label style="font-size:12px;color:var(--t2)">I agree to the <a href="#" style="color:var(--pd);font-weight:600;text-decoration:none">Terms</a></label></div><button class="bp" onclick="doRegDriver()">CREATE ACCOUNT</button></div></div>';
+}
+
+/* --- REGISTER OWNER --- */
+function rRegOwn(){
+return'<div style="padding:8px 20px 100px"><div class="ai"><button onclick="back()" style="background:none;border:none;cursor:pointer"><span class="material-icons-round" style="font-size:24px;color:var(--tx)">arrow_back</span></button></div><div class="ai2"><h2 style="font-size:24px;font-weight:900;color:var(--tx);margin-bottom:4px">Owner Registration</h2><p style="font-size:13px;color:var(--t2);margin-bottom:20px">Set up your fleet account</p><div class="ig"><label>Full Name</label><input type="text" id="regOwnName" placeholder="Enter full name"><span class="material-icons-round ii">person</span></div><div class="ig"><label>Email</label><input type="email" id="regOwnEmail" placeholder="you@example.com"><span class="material-icons-round ii">mail</span></div><div class="ig"><label>Phone</label><input type="tel" id="regOwnPhone" placeholder="+91 XXXXX XXXXX"><span class="material-icons-round ii">phone</span></div><div class="ig"><label>Company Name</label><input type="text" id="regOwnCompany" placeholder="Your company name"><span class="material-icons-round ii">business</span></div><div class="ig"><label>Fleet Size</label><select id="regOwnSize"><option value="">Select</option><option>1-5</option><option>6-15</option><option>16-50</option><option>50+</option></select><span class="material-icons-round ii">expand_more</span></div><div class="ig"><label>Password</label><input type="password" id="regOwnPass" placeholder="Min 8 characters"><span class="material-icons-round ii">lock</span></div><div style="display:flex;align-items:center;gap:8px;margin-bottom:20px"><input type="checkbox" style="accent-color:var(--p)"><label style="font-size:12px;color:var(--t2)">I agree to the <a href="#" style="color:var(--pd);font-weight:600;text-decoration:none">Terms</a></label></div><button class="bp" onclick="doRegOwner()">CREATE ACCOUNT</button></div></div>';
+}
+function doRegDriver(){
+var n=document.getElementById('regDrvName');var e=document.getElementById('regDrvEmail');var ph=document.getElementById('regDrvPhone');var l=document.getElementById('regDrvLic');var p=document.getElementById('regDrvPass');
+if(!n||!n.value||!e||!e.value||!p||!p.value){toast('Fill all required fields','er');return}
+toast('Creating account...','in');
+apiCall('register',{name:n.value,email:e.value,password:p.value,role:'driver',phone:ph?ph.value:'',license:l?l.value:''}).then(function(r){
+if(!r.success){toast(r.error||'Registration failed','er');return}
+toast('Account created!','ok');setTimeout(function(){nav('login')},500);
+}).catch(function(e){toast('Error: '+e.toString(),'er')});
+}
+function doRegOwner(){
+var n=document.getElementById('regOwnName');var e=document.getElementById('regOwnEmail');var ph=document.getElementById('regOwnPhone');var p=document.getElementById('regOwnPass');
+if(!n||!n.value||!e||!e.value||!p||!p.value){toast('Fill all required fields','er');return}
+toast('Creating account...','in');
+apiCall('register',{name:n.value,email:e.value,password:p.value,role:'owner',phone:ph?ph.value:''}).then(function(r){
+if(!r.success){toast(r.error||'Registration failed','er');return}
+toast('Fleet account created!','ok');setTimeout(function(){nav('login')},500);
+}).catch(function(e){toast('Error: '+e.toString(),'er')});
+}
+
+/* --- DRIVER DASHBOARD --- */
+function rDrvDash(){
+var drv=getDriver(S.user?S.user.id:1);
+var html='<div>';
+html+='<div class="gh" style="padding:20px 20px 28px;border-radius:0 0 28px 28px">';
+html+='<div class="ai" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;position:relative;z-index:2"><div><p style="font-size:13px;color:rgba(255,255,255,.65);margin-bottom:2px">Good Morning</p><h2 style="font-size:22px;font-weight:800">'+(S.user?S.user.name:'Driver')+'</h2></div>';
+html+='<div style="display:flex;gap:10px"><div onclick="nav(\'notifScreen\')" style="width:42px;height:42px;background:rgba(255,255,255,.12);border-radius:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:1px solid rgba(255,255,255,.15);position:relative"><span class="material-icons-round" style="font-size:20px;color:#fff">notifications</span>';
+if(S.notifOn){var uc=0;for(var i=0;i<D.notifications.length;i++){if(!D.notifications[i].read)uc++}if(uc>0)html+='<div style="width:8px;height:8px;background:#f59e0b;border-radius:50%;position:absolute;top:8px;right:8px;border:2px solid var(--pd)"></div>';}
+html+='</div><div onclick="nav(\'profile\')" style="width:42px;height:42px;background:rgba(255,255,255,.12);border-radius:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:1px solid rgba(255,255,255,.15)"><span class="material-icons-round" style="font-size:20px;color:#fff">person</span></div></div></div>';
+html+='<div class="ai2" style="display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,.1);backdrop-filter:blur(8px);border-radius:14px;padding:14px 18px;border:1px solid rgba(255,255,255,.12);position:relative;z-index:2"><div><div style="font-size:14px;font-weight:700;color:rgba(255,255,255,.7)">Duty Status</div></div><div style="display:flex;align-items:center;gap:10px"><span style="font-size:14px;font-weight:800;color:#fff">'+(S.dutyOn?'ON DUTY':'OFF DUTY')+'</span><div class="sw '+(S.dutyOn?'on':'')+'" onclick="toggleDuty()"></div></div></div></div>';
+html+='<div style="padding:20px;padding-bottom:100px">';
+if(S.dutyOn){
+var c=getCar(S.duty.carId);var calc=dutyCalc();
+html+='<div class="ai3 cd" style="margin-bottom:16px;background:var(--pbg);border-color:var(--psf)"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><div style="display:flex;gap:10px;align-items:center"><div style="width:40px;height:40px;background:var(--p);border-radius:10px;display:flex;align-items:center;justify-content:center"><span class="material-icons-round" style="font-size:20px;color:#fff">directions_car</span></div><div><div style="font-size:14px;font-weight:700;color:var(--tx)">'+c.make+' '+c.model+'</div><div style="font-size:11px;color:var(--tm)">'+c.plate+'</div></div></div><span class="bg gn prs">Active</span></div>';
+html+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px"><div style="text-align:center"><div style="font-size:18px;font-weight:800;color:var(--tx)">'+S.duty.trips.length+'</div><div style="font-size:10px;color:var(--tm)">Trips</div></div><div style="text-align:center"><div style="font-size:18px;font-weight:800;color:var(--tx)">'+fmt(calc.totalEarnings)+'</div><div style="font-size:10px;color:var(--tm)">Earnings</div></div><div style="text-align:center"><div style="font-size:18px;font-weight:800;color:var(--tx)">'+fmt(calc.fuelCost+calc.expenses+calc.fines)+'</div><div style="font-size:10px;color:var(--tm)">Expenses</div></div></div></div>';
+html+='<div class="ai3" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px">';
+html+='<div onclick="nav(\'addFuel\')" style="background:#fff7ed;border-radius:14px;padding:16px;cursor:pointer;border:1px solid #fed7aa"><span class="material-icons-round" style="font-size:28px;color:#ea580c;margin-bottom:6px;display:block">local_gas_station</span><div style="font-size:13px;font-weight:700;color:var(--tx)">Add Fuel</div><div style="font-size:11px;color:var(--tm)">Log fuel fill</div></div>';
+html+='<div onclick="nav(\'addExpense\')" style="background:#eff6ff;border-radius:14px;padding:16px;cursor:pointer;border:1px solid #bfdbfe"><span class="material-icons-round" style="font-size:28px;color:#2563eb;margin-bottom:6px;display:block">receipt_long</span><div style="font-size:13px;font-weight:700;color:var(--tx)">Add Expense</div><div style="font-size:11px;color:var(--tm)">Toll, parking etc</div></div>';
+html+='<div onclick="nav(\'endDuty\')" style="background:var(--dnl);border-radius:14px;padding:16px;cursor:pointer;border:1px solid #fecaca;grid-column:span 2"><span class="material-icons-round" style="font-size:28px;color:var(--dn);margin-bottom:6px;display:block">stop_circle</span><div style="font-size:13px;font-weight:700;color:var(--tx)">End Duty</div><div style="font-size:11px;color:var(--tm)">Close & report</div></div></div>';
+}else{
+html+='<div class="ai3 cd" style="text-align:center;padding:32px 20px;margin-bottom:20px"><div style="width:64px;height:64px;background:var(--pbg);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px"><span class="material-icons-round" style="font-size:32px;color:var(--p)">work_off</span></div><h3 style="font-size:17px;font-weight:800;color:var(--tx);margin-bottom:6px">You are Off Duty</h3><p style="font-size:13px;color:var(--tm);line-height:1.5">Turn on duty to select a car and start earning</p></div>';
+}
+html+='<div class="'+(S.dutyOn?'ai4':'ai3')+'"><h3 style="font-size:15px;font-weight:800;color:var(--tx);margin-bottom:12px">Recent Duty Reports</h3>';
+if(D.dutyHistory.length===0){html+='<div class="cd" style="text-align:center;padding:24px;color:var(--tm);font-size:13px">No duty reports yet</div>';}else{
+for(var i=0;i<D.dutyHistory.length;i++){var d=D.dutyHistory[i];var c2=getCar(d.carId);
+html+='<div class="cd" style="margin-bottom:8px;cursor:pointer" onclick="viewDutyReport('+d.id+')"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div style="display:flex;gap:10px;align-items:center"><div style="width:36px;height:36px;background:var(--pbg);border-radius:8px;display:flex;align-items:center;justify-content:center"><span class="material-icons-round" style="font-size:18px;color:var(--p)">directions_car</span></div><div><div style="font-size:13px;font-weight:700;color:var(--tx)">'+c2.make+' '+c2.model+'</div><div style="font-size:11px;color:var(--tm)">'+d.date+' \u00B7 '+(d.manualTripCount||d.trips.length)+' trips</div></div></div><span class="bg '+(d.status==='settled'?'gn':'am')+'">'+d.status+'</span></div><div style="display:flex;justify-content:space-between;font-size:12px;color:var(--t2)"><span>Earned: '+fmt(d.totalEarnings)+'</span><span>Net: <b style="color:'+(d.driverNet>=0?'var(--p)':'var(--dn)')+'">'+fmt(d.driverNet)+'</b></span></div></div>';}
+}
+html+='</div>';
+html+='<div style="margin-top:16px" class="ai4"><div class="cd" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><div><div style="font-size:13px;font-weight:700;color:var(--tx)">Pending Balance</div><div style="font-size:11px;color:var(--tm)">From owner settlements</div></div><div style="font-size:20px;font-weight:900;color:var(--p)">'+fmt(drv?drv.balance:0)+'</div></div></div>';
+html+='<div class="ai4" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px"><div onclick="nav(\'advanceHistory\')" style="background:var(--acl);border-radius:14px;padding:14px;cursor:pointer;text-align:center;border:1px solid #fde68a"><span class="material-icons-round" style="font-size:26px;color:#d97706;display:block;margin-bottom:4px">payments</span><div style="font-size:12px;font-weight:700;color:var(--tx)">Advances</div></div><div onclick="nav(\'recentActivity\')" style="background:#eff6ff;border-radius:14px;padding:14px;cursor:pointer;text-align:center;border:1px solid #bfdbfe"><span class="material-icons-round" style="font-size:26px;color:#2563eb;display:block;margin-bottom:4px">history</span><div style="font-size:12px;font-weight:700;color:var(--tx)">Activity</div></div></div>';
+html+='</div></div>';
+return html;
+}
+
+function toggleDuty(){if(S.dutyOn){toast('Please end duty first','er');return}nav('startDuty')}
+
+/* --- START DUTY --- */
+function rStartDuty(){
+var avail=[];for(var i=0;i<D.cars.length;i++){if(D.cars[i].status==='available')avail.push(D.cars[i])}
+var html='<div style="padding:8px 20px 100px"><div class="ai" style="display:flex;align-items:center;gap:12px;margin-bottom:20px"><button onclick="back()" style="background:none;border:none;cursor:pointer"><span class="material-icons-round" style="font-size:24px;color:var(--tx)">arrow_back</span></button><h2 style="font-size:20px;font-weight:900;color:var(--tx)">Start Duty</h2></div>';
+html+='<div class="ai2" style="text-align:center;margin-bottom:24px"><div style="width:60px;height:60px;background:var(--pbg);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 12px" class="prs"><span class="material-icons-round" style="font-size:30px;color:var(--p)">play_circle</span></div><p style="font-size:13px;color:var(--t2)">Select a car and enter starting details</p></div>';
+html+='<div class="ai2"><div class="ig"><label>Select Car</label><select id="sdCar">';
+for(var i=0;i<avail.length;i++)html+='<option value="'+avail[i].id+'">'+avail[i].make+' '+avail[i].model+' \u2014 '+avail[i].plate+'</option>';
+html+='</select><span class="material-icons-round ii">expand_more</span></div>';
+html+='<div class="ig"><label>Starting KM Reading</label><input type="number" id="sdKm" placeholder="e.g. 45230"><span class="material-icons-round ii">speed</span></div>';
+html+='<div class="ig"><label>Starting Fuel Level (%)</label><input type="number" id="sdFuel" placeholder="e.g. 85" min="0" max="100"><span class="material-icons-round ii">local_gas_station</span></div>';
+if(avail.length>0)html+='<div style="padding:12px;background:var(--acl);border-radius:12px;border:1px solid #fde68a;margin-bottom:20px;display:flex;gap:8px;align-items:flex-start"><span class="material-icons-round" style="font-size:18px;color:#d97706">info</span><div style="font-size:12px;color:#92400e;line-height:1.5">Driver share: <b>'+avail[0].driverPct+'%</b> of total earnings. Fuel & personal expenses deducted from your share.</div></div>';
+html+='<button class="bp" onclick="doStartDuty()">START DUTY</button></div></div>';
+return html;
+}
+
+function doStartDuty(){
+var cid=parseInt(document.getElementById('sdCar').value);
+var km=parseInt(document.getElementById('sdKm').value);
+var fl=parseInt(document.getElementById('sdFuel').value);
+if(!km||isNaN(fl)){toast('Fill all fields','er');return}
+var car=getCar(cid);if(!car){toast('Select a car','er');return}
+toast('Starting duty...','in');
+apiCall('startDuty',{driverId:S.user.id,carId:cid,startKm:km,startFuel:fl,driverPct:car.driverPct}).then(function(r){
+if(!r.success){toast(r.error||'Failed','er');return}
+return loadData();
+}).then(function(){
+S.dutyOn=true;
+var car2=getCar(cid);
+S.duty={carId:cid,driverId:S.user.id,startKm:km,startFuel:fl,startTime:new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}),trips:[],fuelEntries:[],expenses:[],fines:[]};
+toast('Duty started! Drive safe.','ok');
+setTimeout(function(){nav('driverDash')},400);
+});
+}
+
+/* --- ACTIVE DUTY --- */
+function rActiveDuty(){
+if(!S.dutyOn)return'<div style="padding:60px 20px;text-align:center"><div style="width:80px;height:80px;background:var(--pbg);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px"><span class="material-icons-round" style="font-size:40px;color:var(--p)">route</span></div><h3 style="font-size:18px;font-weight:800;color:var(--tx);margin-bottom:8px">No Active Duty</h3><p style="font-size:13px;color:var(--tm);margin-bottom:24px">Start your duty from the dashboard</p><button class="bp" style="width:auto;padding:0 32px;margin:0 auto;display:inline-flex" onclick="nav(\'driverDash\')">Go to Dashboard</button></div>';
+var c=getCar(S.duty.carId),calc=dutyCalc();
+var h='<div><div class="gh" style="padding:16px 20px 24px;border-radius:0 0 28px 28px"><div class="ai" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;position:relative;z-index:2"><h2 style="font-size:20px;font-weight:800">Active Duty</h2><span class="bg" style="background:rgba(255,255,255,.15);color:#fff">Since '+S.duty.startTime+'</span></div>';
+h+='<div class="ai2" style="display:flex;gap:8px;position:relative;z-index:2"><div style="flex:1;background:rgba(255,255,255,.1);border-radius:12px;padding:12px;text-align:center;border:1px solid rgba(255,255,255,.12)"><div style="font-size:20px;font-weight:800">'+S.duty.trips.length+'</div><div style="font-size:10px;color:rgba(255,255,255,.6)">Trips</div></div><div style="flex:1;background:rgba(255,255,255,.1);border-radius:12px;padding:12px;text-align:center;border:1px solid rgba(255,255,255,.12)"><div style="font-size:20px;font-weight:800">'+fmt(calc.totalEarnings)+'</div><div style="font-size:10px;color:rgba(255,255,255,.6)">Earned</div></div><div style="flex:1;background:rgba(255,255,255,.1);border-radius:12px;padding:12px;text-align:center;border:1px solid rgba(255,255,255,.12)"><div style="font-size:20px;font-weight:800">'+fmt(calc.fuelCost+calc.expenses+calc.fines)+'</div><div style="font-size:10px;color:rgba(255,255,255,.6)">Spent</div></div></div></div>';
+h+='<div style="padding:20px;padding-bottom:100px"><div class="ai3 cd" style="margin-bottom:16px"><div style="display:flex;gap:12px;align-items:center;margin-bottom:10px"><img src="'+c.img+'" style="width:56px;height:40px;border-radius:8px;object-fit:cover"><div><div style="font-size:14px;font-weight:700;color:var(--tx)">'+c.make+' '+c.model+'</div><div style="font-size:11px;color:var(--tm)">'+c.plate+' \u00B7 Start: '+S.duty.startKm+' km \u00B7 Fuel: '+S.duty.startFuel+'%</div></div></div><div style="font-size:12px;color:var(--t2)">Your share: <b style="color:var(--p)">'+c.driverPct+'%</b></div></div>';
+h+='<div class="ai3" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px"><div onclick="nav(\'addFuel\')" style="background:#fff7ed;border-radius:14px;padding:14px;cursor:pointer;text-align:center;border:1px solid #fed7aa"><span class="material-icons-round" style="font-size:26px;color:#ea580c;display:block;margin-bottom:4px">local_gas_station</span><div style="font-size:12px;font-weight:700;color:var(--tx)">Fuel</div></div><div onclick="nav(\'addExpense\')" style="background:#eff6ff;border-radius:14px;padding:14px;cursor:pointer;text-align:center;border:1px solid #bfdbfe"><span class="material-icons-round" style="font-size:26px;color:#2563eb;display:block;margin-bottom:4px">receipt_long</span><div style="font-size:12px;font-weight:700;color:var(--tx)">Expense</div></div></div>';
+if(S.duty.trips.length>0){h+='<div class="ai4"><h3 style="font-size:14px;font-weight:800;color:var(--tx);margin-bottom:10px">Today\'s Trips</h3><div class="cd">';for(var i=0;i<S.duty.trips.length;i++){var t=S.duty.trips[i];h+='<div style="display:flex;gap:10px;align-items:center';if(i<S.duty.trips.length-1)h+=';padding-bottom:12px;border-bottom:1px solid #f1f5f9;margin-bottom:12px';h+='"><div style="width:32px;height:32px;background:var(--pbg);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:var(--p)">'+(i+1)+'</div><div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:600;color:var(--tx)">'+t.from+' \u2192 '+t.to+'</div></div><div style="font-size:14px;font-weight:800;color:var(--p)">+'+fmt(t.fare)+'</div></div>';}h+='</div></div>';}
+h+='<div style="margin-top:20px"><button class="bp dn" style="width:100%" onclick="nav(\'endDuty\')"><span class="material-icons-round" style="font-size:20px">stop_circle</span> END DUTY</button></div></div></div>';
+return h;
+}
+
+/* --- ADD FUEL --- */
+function rAddFuel(){return'<div style="padding:8px 20px 100px"><div class="ai" style="display:flex;align-items:center;gap:12px;margin-bottom:20px"><button onclick="back()" style="background:none;border:none;cursor:pointer"><span class="material-icons-round" style="font-size:24px;color:var(--tx)">arrow_back</span></button><h2 style="font-size:20px;font-weight:900;color:var(--tx)">Add Fuel</h2></div><div class="ai2"><div class="ig"><label>Liters Filled</label><input type="number" id="afLit" placeholder="e.g. 25" step="0.1"><span class="material-icons-round ii">water_drop</span></div><div class="ig"><label>Total Cost (Rs.)</label><input type="number" id="afCost" placeholder="e.g. 2350"><span class="material-icons-round ii">currency_rupee</span></div><div class="ig"><label>Fuel Station</label><input type="text" id="afSta" placeholder="e.g. HP Pump, MG Road"><span class="material-icons-round ii">location_on</span></div><button class="bp" onclick="doAddFuel()">ADD FUEL ENTRY</button></div></div>'}
+function doAddFuel(){var l=parseFloat(document.getElementById('afLit').value),c=parseFloat(document.getElementById('afCost').value),s=document.getElementById('afSta').value;if(!l||!c||!s){toast('Fill all fields','er');return}
+var dutyId=S._lastDutyId||0;
+if(!dutyId){for(var i=0;i<D.dutyHistory.length;i++){if(D.dutyHistory[i].status==='pending'&&D.dutyHistory[i].driverId===(S.user?S.user.id:0)){dutyId=D.dutyHistory[i].id;break}}}
+if(!dutyId){toast('No active duty','er');return}
+toast('Saving...','in');
+apiCall('addFuel',{dutyId:dutyId,liters:l,cost:c,station:s}).then(function(r){
+if(!r.success){toast(r.error||'Failed','er');return}
+S.duty.fuelEntries.push({liters:l,cost:c,station:s});
+return loadData();
+}).then(function(){toast('Fuel entry saved! -'+fmt(c),'ok');back()});
+}
+
+/* --- ADD EXPENSE / FINE --- */
+function rAddExp(){return'<div style="padding:8px 20px 100px"><div class="ai" style="display:flex;align-items:center;gap:12px;margin-bottom:20px"><button onclick="back()" style="background:none;border:none;cursor:pointer"><span class="material-icons-round" style="font-size:24px;color:var(--tx)">arrow_back</span></button><h2 style="font-size:20px;font-weight:900;color:var(--tx)">Add Expense / Fine</h2></div><div class="ai2"><div class="ig"><label>Type</label><select id="aeType"><option value="Toll">Toll</option><option value="Parking">Parking</option><option value="Food">Food / Tea</option><option value="Wash">Car Wash</option><option value="Other">Other Expense</option><option value="Speeding Fine">Speeding Fine</option><option value="Traffic Fine">Traffic Violation</option><option value="Other Fine">Other Fine</option></select><span class="material-icons-round ii">category</span></div><div class="ig"><label>Amount (Rs.)</label><input type="number" id="aeAmt" placeholder="e.g. 120"><span class="material-icons-round ii">currency_rupee</span></div><div class="ig"><label>Description</label><input type="text" id="aeDesc" placeholder="e.g. Toll gate - NH4"><span class="material-icons-round ii">description</span></div><div style="padding:12px;background:var(--dnl);border-radius:12px;border:1px solid #fecaca;margin-bottom:20px;display:flex;gap:8px;align-items:flex-start"><span class="material-icons-round" style="font-size:18px;color:var(--dn)">warning</span><div style="font-size:12px;color:#991b1b;line-height:1.5">All expenses and fines are deducted from <b>your share</b>. Personal expenses reduce your net salary.</div></div><button class="bp" onclick="doAddExp()">ADD EXPENSE</button></div></div>'}
+function doAddExp(){var t=document.getElementById('aeType').value,a=parseFloat(document.getElementById('aeAmt').value),d=document.getElementById('aeDesc').value;if(!a){toast('Enter amount','er');return}
+var dutyId=0;
+for(var i=0;i<D.dutyHistory.length;i++){if(D.dutyHistory[i].status==='pending'&&D.dutyHistory[i].driverId===(S.user?S.user.id:0)){dutyId=D.dutyHistory[i].id;break}}
+if(!dutyId){toast('No active duty','er');return}
+var isFine=t.indexOf('Fine')!==-1;
+toast('Saving...','in');
+apiCall('addExpense',{dutyId:dutyId,type:t,amount:a,desc:d||t}).then(function(r){
+if(!r.success){toast(r.error||'Failed','er');return}
+if(isFine)S.duty.fines.push({type:t,amount:a,desc:d||t});else S.duty.expenses.push({type:t,amount:a,desc:d||t});
+return loadData();
+}).then(function(){toast(t+' of '+fmt(a)+' added','ok');back()});
+}
+
+/* --- END DUTY --- */
+function rEndDuty(){
+var c=getCar(S.duty.carId),calc=dutyCalc();
+var h='<div style="padding:8px 20px 100px"><div class="ai" style="display:flex;align-items:center;gap:12px;margin-bottom:20px"><button onclick="back()" style="background:none;border:none;cursor:pointer"><span class="material-icons-round" style="font-size:24px;color:var(--tx)">arrow_back</span></button><h2 style="font-size:20px;font-weight:900;color:var(--tx)">End Duty</h2></div>';
+h+='<div class="ai2" style="text-align:center;margin-bottom:20px"><div style="width:60px;height:60px;background:var(--dnl);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 12px"><span class="material-icons-round" style="font-size:30px;color:var(--dn)">stop_circle</span></div><p style="font-size:13px;color:var(--t2)">Enter ending details to close duty</p></div>';
+h+='<div class="ai2"><div class="ig"><label>Ending KM Reading</label><input type="number" id="edKm" placeholder="e.g. 45480"><span class="material-icons-round ii">speed</span></div><div class="ig"><label>Ending Fuel Level (%)</label><input type="number" id="edFuel" placeholder="e.g. 60" min="0" max="100"><span class="material-icons-round ii">local_gas_station</span></div>';
+h+='<div class="ig"><label>Total Trips Completed</label><input type="number" id="edTripCount" placeholder="e.g. 8" min="0"><span class="material-icons-round ii">route</span></div>';
+h+='<div class="ig"><label>Total Earnings (Rs.)</label><input type="number" id="edManualEarn" placeholder="e.g. 1500" min="0"><span class="material-icons-round ii">currency_rupee</span></div>';
+h+='<div style="padding:12px;background:var(--acl);border-radius:12px;border:1px solid #fde68a;margin-bottom:20px;display:flex;gap:8px;align-items:flex-start"><span class="material-icons-round" style="font-size:18px;color:#d97706">info</span><div style="font-size:12px;color:#92400e;line-height:1.5">Enter the total number of trips and total earned amount for this duty. Fuel & expenses will be deducted from your share.</div></div>';
+h+='<div class="cd" style="margin-bottom:20px"><h4 style="font-size:13px;font-weight:700;color:var(--tx);margin-bottom:12px">Duty Summary</h4><div style="display:flex;flex-direction:column;gap:8px">';
+h+='<div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--t2)">Total Trips</span><span style="font-weight:700;color:var(--tm)">Enter above</span></div>';
+h+='<div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--t2)">Total Earnings</span><span style="font-weight:700;color:var(--tm)">Enter above</span></div>';
+h+='<div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--t2)">Fuel Cost</span><span style="font-weight:700;color:#ea580c">-'+fmt(calc.fuelCost)+'</span></div>';
+h+='<div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--t2)">Other Expenses</span><span style="font-weight:700;color:var(--dn)">-'+fmt(calc.expenses)+'</span></div>';
+if(calc.fines>0)h+='<div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--t2)">Fines</span><span style="font-weight:700;color:var(--dn)">-'+fmt(calc.fines)+'</span></div>';
+h+='<div style="border-top:1px dashed var(--bd);padding-top:8px;margin-top:4px"></div>';
+h+='<div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--t2)">Your Share ('+calc.driverPct+'%)</span><span style="font-weight:700;color:var(--tm)">--</span></div>';
+h+='<div style="display:flex;justify-content:space-between;font-size:15px;font-weight:800"><span style="color:var(--tx)">Your Net Salary</span><span style="color:var(--tm)">--</span></div>';
+h+='<div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--t2)">Owner Share ('+(100-calc.driverPct)+'%)</span><span style="font-weight:700;color:var(--tm)">--</span></div>';
+h+='</div></div><button class="bp dn" onclick="doEndDuty()">CLOSE DUTY & GENERATE REPORT</button></div></div>';
+return h;
+}
+
+function doEndDuty(){
+var ek=parseInt(document.getElementById('edKm').value),ef=parseInt(document.getElementById('edFuel').value);
+if(!ek||isNaN(ef)){toast('Fill all fields','er');return}
+var tc=parseInt(document.getElementById('edTripCount').value);
+var me=document.getElementById('edManualEarn');
+if(!tc||tc<=0){toast('Enter number of trips','er');return}
+if(!me||!me.value||parseFloat(me.value)<=0){toast('Enter total earnings','er');return}
+var manualEarn=parseFloat(me.value);
+var calc=dutyCalc(),c=getCar(S.duty.carId);
+var totalEarnings=manualEarn;
+var driverPct=calc.driverPct;
+var fc=calc.fuelCost,ex=calc.expenses,fn=calc.fines;
+var dutyId=0;
+for(var i=0;i<D.dutyHistory.length;i++){if(D.dutyHistory[i].status==='pending'&&D.dutyHistory[i].driverId===(S.user?S.user.id:0)){dutyId=D.dutyHistory[i].id;break}}
+if(!dutyId){toast('No active duty found','er');return}
+toast('Closing duty...','in');
+apiCall('endDuty',{id:dutyId,endKm:ek,endFuel:ef,totalEarnings:totalEarnings,driverPct:driverPct,fuelCost:fc,expensesAmt:ex,finesAmt:fn,manualTripCount:tc,carMake:c?c.make:'',carModel:c?c.model:'',trips:S.duty.trips,fuelEntries:S.duty.fuelEntries,expenses:S.duty.expenses,fines:S.duty.fines}).then(function(r){
+if(!r.success){toast(r.error||'Failed','er');return}
+S.dutyOn=false;S.duty=null;
+return loadData();
+}).then(function(){
+S._lastReport=D.dutyHistory.length>0?D.dutyHistory[0]:null;
+toast('Duty closed! Report generated.','ok');
+setTimeout(function(){nav('dutyReport')},400);
+});
+}
+
+/* --- DUTY REPORT --- */
+function rDutyReport(){
+var r=S._lastReport||D.dutyHistory[0];if(!r)return'<div style="padding:60px 20px;text-align:center;color:var(--tm)">No report</div>';
+var c=getCar(r.carId),km=r.endKm-r.startKm;
+var tripCount=r.manualTripCount||r.trips.length;
+var h='<div style="padding:8px 20px 100px"><div class="ai" style="display:flex;align-items:center;gap:12px;margin-bottom:16px"><button onclick="nav(\'driverDash\',false)" style="background:none;border:none;cursor:pointer"><span class="material-icons-round" style="font-size:24px;color:var(--tx)">arrow_back</span></button><h2 style="font-size:20px;font-weight:900;color:var(--tx)">Duty Report</h2></div>';
+h+='<div class="ai2 cd" style="text-align:center;margin-bottom:16px;background:linear-gradient(135deg,var(--pdp),var(--pd));border:none;color:#fff;padding:20px"><div style="font-size:12px;color:var(--plr);margin-bottom:2px">'+r.date+'</div><div style="font-size:14px;font-weight:700;margin-bottom:12px">'+c.make+' '+c.model+' \u2014 '+c.plate+'</div><div style="display:flex;justify-content:center;gap:24px"><div><div style="font-size:20px;font-weight:800">'+km+' km</div><div style="font-size:10px;color:var(--plr)">Driven</div></div><div><div style="font-size:20px;font-weight:800">'+tripCount+'</div><div style="font-size:10px;color:var(--plr)">Trips</div></div><div><div style="font-size:20px;font-weight:800">'+fmt(r.totalEarnings)+'</div><div style="font-size:10px;color:var(--plr)">Earned</div></div></div></div>';
+h+='<div class="ai3" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px"><div class="cd" style="text-align:center"><div style="font-size:11px;color:var(--tm)">Fuel: '+r.startFuel+'% \u2192 '+r.endFuel+'%</div><div style="font-size:16px;font-weight:800;color:#ea580c;margin-top:4px">-'+fmt(r.fuelCost)+'</div></div><div class="cd" style="text-align:center"><div style="font-size:11px;color:var(--tm)">Expenses + Fines</div><div style="font-size:16px;font-weight:800;color:var(--dn);margin-top:4px">-'+fmt(r.expenses+r.fines)+'</div></div></div>';
+h+='<div class="ai3 cd" style="margin-bottom:16px"><h4 style="font-size:13px;font-weight:700;color:var(--tx);margin-bottom:10px">Salary Calculation</h4><div style="display:flex;flex-direction:column;gap:6px">';
+h+='<div style="display:flex;justify-content:space-between;font-size:13px;padding:8px 0;border-bottom:1px solid #f1f5f9"><span style="color:var(--t2)">Total Earnings</span><span style="font-weight:700;color:var(--tx)">'+fmt(r.totalEarnings)+'</span></div>';
+h+='<div style="display:flex;justify-content:space-between;font-size:13px;padding:8px 0;border-bottom:1px solid #f1f5f9"><span style="color:var(--t2)">Owner Share ('+(100-r.driverPct)+'%)</span><span style="font-weight:700;color:var(--tx)">'+fmt(r.ownerShare)+'</span></div>';
+h+='<div style="display:flex;justify-content:space-between;font-size:13px;padding:8px 0;border-bottom:1px solid #f1f5f9"><span style="color:var(--t2)">Driver Gross ('+r.driverPct+'%)</span><span style="font-weight:700;color:var(--p)">'+fmt(r.driverGross)+'</span></div>';
+h+='<div style="display:flex;justify-content:space-between;font-size:13px;padding:8px 0;border-bottom:1px solid #f1f5f9"><span style="color:var(--t2)">Less: Fuel</span><span style="font-weight:700;color:#ea580c">-'+fmt(r.fuelCost)+'</span></div>';
+if(r.expenses>0)h+='<div style="display:flex;justify-content:space-between;font-size:13px;padding:8px 0;border-bottom:1px solid #f1f5f9"><span style="color:var(--t2)">Less: Expenses</span><span style="font-weight:700;color:var(--dn)">-'+fmt(r.expenses)+'</span></div>';
+if(r.fines>0)h+='<div style="display:flex;justify-content:space-between;font-size:13px;padding:8px 0;border-bottom:1px solid #f1f5f9"><span style="color:var(--t2)">Less: Fines</span><span style="font-weight:700;color:var(--dn)">-'+fmt(r.fines)+'</span></div>';
+h+='<div style="display:flex;justify-content:space-between;font-size:16px;font-weight:900;padding:12px;background:var(--pbg);border-radius:10px;margin-top:4px"><span style="color:var(--tx)">Driver Net Salary</span><span style="color:'+(r.driverNet>=0?'var(--p)':'var(--dn)')+'">'+fmt(r.driverNet)+'</span></div>';
+h+='</div></div>';
+if(r.trips.length>0){h+='<div class="ai4"><h4 style="font-size:13px;font-weight:700;color:var(--tx);margin-bottom:10px">Trip Details</h4><div class="cd">';
+for(var i=0;i<r.trips.length;i++){var t=r.trips[i];h+='<div style="display:flex;gap:10px;align-items:center';if(i<r.trips.length-1)h+=';padding-bottom:10px;border-bottom:1px solid #f1f5f9;margin-bottom:10px';h+='"><div style="width:28px;height:28px;background:var(--pbg);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:var(--p)">'+(i+1)+'</div><div style="flex:1;font-size:12px;color:var(--t2)">'+t.from+' \u2192 '+t.to+'</div><div style="font-size:13px;font-weight:700;color:var(--p)">'+fmt(t.fare)+'</div></div>';}
+h+='</div></div>';}
+h+='<div style="margin-top:16px" class="ai4"><div class="cd" style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-size:13px;font-weight:700;color:var(--tx)">Settlement Status</div><div style="font-size:11px;color:var(--tm)">Owner will settle this amount</div></div><span class="bg '+(r.status==='settled'?'gn':'am')+'">'+r.status+'</span></div></div></div>';
+return h;
+}
+function viewDutyReport(id){S._lastReport=null;for(var i=0;i<D.dutyHistory.length;i++){if(String(D.dutyHistory[i].id)===String(id)){S._lastReport=D.dutyHistory[i];break}}nav('dutyReport')}
+
+/* --- DRIVER EARNINGS --- */
+function rDrvEarn(){
+var drv=getDriver(S.user?S.user.id:1);var did=S.user?S.user.id:1;
+var myDuties=[];for(var i=0;i<D.dutyHistory.length;i++){if(D.dutyHistory[i].driverId===did)myDuties.push(D.dutyHistory[i])}
+var totalNet=0;for(var i=0;i<myDuties.length;i++)totalNet+=myDuties[i].driverNet;
+var pending=[];for(var i=0;i<myDuties.length;i++){if(myDuties[i].status==='pending')pending.push(myDuties[i])}
+var h='<div style="padding:8px 20px 100px"><div class="ai" style="margin-bottom:20px"><h2 style="font-size:22px;font-weight:900;color:var(--tx)">Earnings</h2></div>';
+h+='<div class="ai2 cd" style="margin-bottom:16px;background:linear-gradient(135deg,var(--pdp),var(--pd));border:none;color:#fff;padding:20px"><div style="font-size:12px;color:var(--plr);margin-bottom:4px">Total Net Earnings</div><div style="font-size:32px;font-weight:900;margin-bottom:12px">'+fmt(totalNet)+'</div><div style="display:flex;gap:16px"><div><div style="font-size:18px;font-weight:800">'+myDuties.length+'</div><div style="font-size:10px;color:var(--plr)">Duty Days</div></div><div><div style="font-size:18px;font-weight:800">'+fmt(drv?drv.balance:0)+'</div><div style="font-size:10px;color:var(--plr)">Pending Balance</div></div></div></div>';
+h+='<div class="ai3"><h3 style="font-size:14px;font-weight:800;color:var(--tx);margin-bottom:10px">Settlements from Owner</h3>';
+if(pending.length>0)h+='<div style="padding:12px;background:var(--acl);border-radius:12px;border:1px solid #fde68a;margin-bottom:10px;display:flex;gap:8px;align-items:center"><span class="material-icons-round" style="font-size:18px;color:#d97706">schedule</span><div style="font-size:12px;color:#92400e"><b>'+pending.length+' duty report(s)</b> awaiting settlement from owner</div></div>';
+for(var i=0;i<myDuties.length;i++){var r=myDuties[i];var c=getCar(r.carId);
+h+='<div class="cd" style="margin-bottom:8px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><div style="font-size:13px;font-weight:700;color:var(--tx)">'+r.date+' \u00B7 '+c.make+' '+c.model+'</div><span class="bg '+(r.status==='settled'?'gn':'am')+'">'+r.status+'</span></div><div style="display:flex;justify-content:space-between;font-size:12px;color:var(--t2)"><span>Gross: '+fmt(r.driverGross)+' \u00B7 Exp: '+fmt(r.fuelCost+r.expenses+r.fines)+'</span><span style="font-weight:800;color:'+(r.driverNet>=0?'var(--p)':'var(--dn)')+'">Net: '+fmt(r.driverNet)+'</span></div></div>';}
+h+='</div></div>';
+return h;
+}
+
+/* --- NOTIFICATIONS --- */
+function rNotif(){
+var h='<div style="padding:8px 20px 100px"><div class="ai" style="display:flex;align-items:center;gap:12px;margin-bottom:20px"><button onclick="back()" style="background:none;border:none;cursor:pointer"><span class="material-icons-round" style="font-size:24px;color:var(--tx)">arrow_back</span></button><h2 style="font-size:20px;font-weight:900;color:var(--tx)">Notifications</h2></div>';
+h+='<div class="ai2 cd" style="margin-bottom:16px;display:flex;justify-content:space-between;align-items:center"><div><div style="font-size:14px;font-weight:700;color:var(--tx)">Push Notifications</div><div style="font-size:12px;color:var(--tm)">'+(S.notifOn?'Enabled \u2014 you will receive alerts':'Disabled by default')+'</div></div><div class="sw '+(S.notifOn?'on':'')+'" onclick="S.notifOn=!S.notifOn;nav(\'notifScreen\',false);toast(S.notifOn?\'Notifications enabled\':\'Notifications disabled\',\'in\')"></div></div>';
+if(!S.notifOn){
+h+='<div class="ai3" style="text-align:center;padding:40px 20px;color:var(--tm)"><span class="material-icons-round" style="font-size:48px;color:var(--bd);display:block;margin-bottom:12px">notifications_off</span><p style="font-size:14px;font-weight:600">Notifications are turned off</p><p style="font-size:12px;margin-top:4px">Enable to receive alerts and updates</p></div>';
+}else{
+h+='<div class="ai3" style="display:flex;flex-direction:column;gap:8px">';
+for(var i=0;i<D.notifications.length;i++){var n=D.notifications[i];
+var bgc=n.type==='settlement'?'var(--pbg)':n.type==='alert'?'var(--dnl)':'#dbeafe';
+var ic=n.type==='settlement'?'account_balance_wallet':n.type==='alert'?'warning':'info';
+var icl=n.type==='settlement'?'var(--p)':n.type==='alert'?'var(--dn)':'#2563eb';
+h+='<div class="cd" style="display:flex;gap:12px;align-items:flex-start;animation:fiu .3s ease '+i*0.05+'s forwards;opacity:'+(n.read?'.55':'1')+';cursor:pointer" onclick="markNotifRead('+n.id+')"><div style="width:38px;height:38px;background:'+bgc+';border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative"><span class="material-icons-round" style="font-size:18px;color:'+icl+'">'+ic+'</span>';
+if(!n.read)h+='<div style="width:7px;height:7px;background:var(--p);border-radius:50%;position:absolute;top:-1px;right:-1px;border:2px solid var(--cd)"></div>';
+h+='</div><div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--tx)">'+n.title+'</div><div style="font-size:12px;color:var(--t2);margin-top:2px;line-height:1.4">'+n.desc+'</div><div style="font-size:10px;color:var(--tm);margin-top:4px">'+n.time+'</div></div></div>';}
+h+='</div>';}
+h+='</div>';
+return h;
+}
+function markNotifRead(id){for(var i=0;i<D.notifications.length;i++){if(String(D.notifications[i].id)===String(id)){D.notifications[i].read=true;break}}nav('notifScreen',false)}
+
+/* --- PROFILE --- */
+function rProfile(){
+var u=S.user||{name:'User',email:'user@greencab.com',role:'driver'};
+var items=[['person','My Profile','Edit your details'],['notifications','Notification Settings',S.notifOn?'Enabled':'Disabled'],['shield','Privacy & Security','Password, 2FA'],['help','Help & Support','FAQs, contact'],['info','About','Version 2.1.0'],['logout','Log Out','Sign out']];
+var h='<div style="padding:8px 20px 100px"><div class="ai" style="text-align:center;margin-bottom:24px"><div style="width:80px;height:80px;background:linear-gradient(135deg,var(--p),var(--pl));border-radius:24px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:28px;font-weight:900;color:#fff">'+u.name.split(' ').map(function(w){return w[0]}).join('').slice(0,2)+'</div><h2 style="font-size:20px;font-weight:900;color:var(--tx)">'+u.name+'</h2><p style="font-size:13px;color:var(--tm)">'+u.email+'</p><span class="bg bl" style="margin-top:6px">'+(u.role==='driver'?'Driver':'Fleet Owner')+'</span></div>';
+h+='<div class="ai2" style="display:flex;flex-direction:column;gap:8px">';
+for(var i=0;i<items.length;i++){var ic=items[i][0],t=items[i][1],s=items[i][2];
+var bgc=ic==='logout'?'var(--dnl)':'var(--pbg)';var icl=ic==='logout'?'var(--dn)':'var(--p)';var tc=ic==='logout'?'var(--dn)':'var(--tx)';
+var onclick=ic==='logout'?'doLogout()':ic==='notifications'?'nav(\'notifScreen\')':'';
+h+='<div class="cd" style="display:flex;gap:14px;align-items:center;cursor:pointer;'+(ic==='logout'?'border-color:var(--dnl)':'')+'" onclick="'+onclick+'"><div style="width:40px;height:40px;background:'+bgc+';border-radius:10px;display:flex;align-items:center;justify-content:center"><span class="material-icons-round" style="font-size:20px;color:'+icl+'">'+ic+'</span></div><div style="flex:1"><div style="font-size:14px;font-weight:700;color:'+tc+'">'+t+'</div><div style="font-size:11px;color:var(--tm)">'+s+'</div></div>';
+if(ic!=='logout')h+='<span class="material-icons-round" style="font-size:18px;color:var(--tm)">chevron_right</span>';
+h+='</div>';}
+h+='</div></div>';
+return h;
+}
+function doLogout(){S.user=null;S.dutyOn=false;S.duty=null;S.hist=[];clearSession();toast('Logged out','ok');setTimeout(function(){nav('welcome',false)},400)}
+
+/* ============ OWNER SCREENS ============ */
+
+/* --- OWNER DASHBOARD --- */
+function rOwnDash(){
+var onDuty=[],avail=[],svc=[];
+for(var i=0;i<D.cars.length;i++){var s=D.cars[i].status;if(s==='on-duty')onDuty.push(D.cars[i]);else if(s==='available')avail.push(D.cars[i]);else svc.push(D.cars[i])}
+var pendingSettle=[];for(var i=0;i<D.dutyHistory.length;i++){if(D.dutyHistory[i].status==='pending')pendingSettle.push(D.dutyHistory[i])}
+var h='<div><div class="gh" style="padding:20px 20px 28px;border-radius:0 0 28px 28px"><div class="ai" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;position:relative;z-index:2"><div><p style="font-size:13px;color:rgba(255,255,255,.65);margin-bottom:2px">Complete Fleet Control</p><h2 style="font-size:22px;font-weight:800">'+(S.user?S.user.name:'Owner')+'</h2></div><div onclick="nav(\'notifScreen\')" style="width:42px;height:42px;background:rgba(255,255,255,.12);border-radius:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:1px solid rgba(255,255,255,.15);position:relative"><span class="material-icons-round" style="font-size:20px;color:#fff">notifications</span>';
+if(S.notifOn&&pendingSettle.length>0)h+='<div style="width:8px;height:8px;background:#f59e0b;border-radius:50%;position:absolute;top:8px;right:8px;border:2px solid var(--pd)"></div>';
+h+='</div></div>';
+h+='<div class="ai2" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;position:relative;z-index:2"><div style="background:rgba(255,255,255,.1);border-radius:12px;padding:10px 6px;text-align:center;border:1px solid rgba(255,255,255,.12)"><div style="font-size:18px;font-weight:800">'+D.cars.length+'</div><div style="font-size:9px;color:rgba(255,255,255,.6)">Total</div></div><div style="background:rgba(52,211,153,.2);border-radius:12px;padding:10px 6px;text-align:center;border:1px solid rgba(255,255,255,.12)"><div style="font-size:18px;font-weight:800">'+onDuty.length+'</div><div style="font-size:9px;color:rgba(255,255,255,.6)">On Duty</div></div><div style="background:rgba(255,255,255,.1);border-radius:12px;padding:10px 6px;text-align:center;border:1px solid rgba(255,255,255,.12)"><div style="font-size:18px;font-weight:800">'+avail.length+'</div><div style="font-size:9px;color:rgba(255,255,255,.6)">Available</div></div><div style="background:rgba(245,158,11,.2);border-radius:12px;padding:10px 6px;text-align:center;border:1px solid rgba(255,255,255,.12)"><div style="font-size:18px;font-weight:800">'+svc.length+'</div><div style="font-size:9px;color:rgba(255,255,255,.6)">Service</div></div></div></div>';
+h+='<div style="padding:20px;padding-bottom:100px">';
+if(pendingSettle.length>0)h+='<div class="ai3 cd" style="margin-bottom:16px;background:var(--acl);border-color:#fde68a;cursor:pointer" onclick="nav(\'driverList\')"><div style="display:flex;gap:12px;align-items:center"><span class="material-icons-round" style="font-size:24px;color:#d97706">account_balance_wallet</span><div><div style="font-size:14px;font-weight:700;color:#92400e">'+pendingSettle.length+' Pending Settlement(s)</div><div style="font-size:12px;color:#a16207">Tap to review and settle</div></div></div></div>';
+h+='<div class="ai3" style="margin-bottom:20px"><h3 style="font-size:15px;font-weight:800;color:var(--tx);margin-bottom:12px">Cars On Duty</h3>';
+if(onDuty.length===0)h+='<div class="cd" style="text-align:center;padding:20px;color:var(--tm);font-size:13px">No cars currently on duty</div>';
+else{for(var i=0;i<onDuty.length;i++){var c=onDuty[i];var duty=null;for(var j=0;j<D.dutyHistory.length;j++){if(D.dutyHistory[j].carId===c.id&&D.dutyHistory[j].status==='pending'){duty=D.dutyHistory[j];break}}var drv=duty?getDriver(duty.driverId):null;
+h+='<div class="cd" style="margin-bottom:8px;cursor:pointer" onclick="S._viewCarId='+c.id+';nav(\'carDetailOwn\')"><div style="display:flex;gap:12px;align-items:center;margin-bottom:10px"><img src="'+c.img+'" style="width:52px;height:36px;border-radius:8px;object-fit:cover"><div style="flex:1"><div style="font-size:14px;font-weight:700;color:var(--tx)">'+c.make+' '+c.model+'</div><div style="font-size:11px;color:var(--tm)">'+c.plate+'</div></div><span class="bg gn">On Duty</span></div>';
+if(drv)h+='<div style="display:flex;gap:12px;align-items:center;padding-top:10px;border-top:1px solid #f1f5f9"><div class="avc" style="background:'+drv.clr+';width:32px;height:32px;font-size:12px;border-radius:8px">'+drv.ini+'</div><div style="flex:1"><div style="font-size:12px;font-weight:600;color:var(--tx)">'+drv.name+'</div><div style="font-size:10px;color:var(--tm)">Earnings: '+fmt(duty.totalEarnings)+' \u00B7 Trips: '+duty.trips.length+'</div></div><span class="material-icons-round" style="font-size:18px;color:var(--tm)">chevron_right</span></div>';
+h+='</div>'}}
+h+='</div>';
+h+='<div class="ai4" style="margin-bottom:20px"><h3 style="font-size:15px;font-weight:800;color:var(--tx);margin-bottom:12px">Quick Actions</h3><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><div onclick="nav(\'addCar\')" style="background:var(--pbg);border-radius:14px;padding:16px;cursor:pointer;border:1px solid var(--psf)"><span class="material-icons-round" style="font-size:28px;color:var(--p);margin-bottom:6px;display:block">add_circle</span><div style="font-size:13px;font-weight:700;color:var(--tx)">Add Car</div></div><div onclick="nav(\'serviceManage\')" style="background:var(--acl);border-radius:14px;padding:16px;cursor:pointer;border:1px solid #fde68a"><span class="material-icons-round" style="font-size:28px;color:#d97706;margin-bottom:6px;display:block">build</span><div style="font-size:13px;font-weight:700;color:var(--tx)">Service</div></div><div onclick="nav(\'driverList\')" style="background:#eff6ff;border-radius:14px;padding:16px;cursor:pointer;border:1px solid #bfdbfe"><span class="material-icons-round" style="font-size:28px;color:#2563eb;margin-bottom:6px;display:block">people</span><div style="font-size:13px;font-weight:700;color:var(--tx)">Drivers</div></div><div onclick="nav(\'revenueOwner\')" style="background:#fce7f3;border-radius:14px;padding:16px;cursor:pointer;border:1px solid #fbcfe8"><span class="material-icons-round" style="font-size:28px;color:#db2777;margin-bottom:6px;display:block">analytics</span><div style="font-size:13px;font-weight:700;color:var(--tx)">Revenue</div></div><div onclick="nav(\'recentActivity\')" style="background:#f0fdf4;border-radius:14px;padding:16px;cursor:pointer;border:1px solid #bbf7d0"><span class="material-icons-round" style="font-size:28px;color:#16a34a;margin-bottom:6px;display:block">history</span><div style="font-size:13px;font-weight:700;color:var(--tx)">Activity</div></div><div onclick="nav(\'advanceHistory\')" style="background:#fef9c3;border-radius:14px;padding:16px;cursor:pointer;border:1px solid #fde68a"><span class="material-icons-round" style="font-size:28px;color:#ca8a04;margin-bottom:6px;display:block">payments</span><div style="font-size:13px;font-weight:700;color:var(--tx)">Advances</div></div></div></div>';
+if(svc.length>0){h+='<div class="ai4"><h3 style="font-size:15px;font-weight:800;color:var(--tx);margin-bottom:10px">In Service</h3>';for(var i=0;i<svc.length;i++){var c=svc[i];h+='<div class="cd" style="margin-bottom:8px;display:flex;gap:12px;align-items:center"><img src="'+c.img+'" style="width:48px;height:34px;border-radius:8px;object-fit:cover"><div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--tx)">'+c.make+' '+c.model+'</div><div style="font-size:11px;color:var(--tm)">'+c.plate+'</div></div><span class="bg am">Service</span></div>'}h+='</div>';}
+h+='</div></div>';
+return h;
+}
+
+/* --- VEHICLE LIST --- */
+function rVehList(){
+var h='<div style="padding:8px 20px 100px"><div class="ai" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><h2 style="font-size:22px;font-weight:900;color:var(--tx)">My Fleet</h2><button class="bsm g" onclick="nav(\'addCar\')"><span class="material-icons-round" style="font-size:16px">add</span> Add</button></div>';
+h+='<div class="ai2" style="display:flex;gap:8px;margin-bottom:16px;overflow-x:auto;scrollbar-width:none">';
+h+='<button class="bsm ol" style="white-space:nowrap">All ('+D.cars.length+')</button>';
+var ac=0,oc=0,sc=0;for(var i=0;i<D.cars.length;i++){if(D.cars[i].status==='available')ac++;else if(D.cars[i].status==='on-duty')oc++;else sc++}
+h+='<button class="bsm ol" style="white-space:nowrap;border-color:var(--p);color:var(--p);background:var(--pbg)">Available ('+ac+')</button>';
+h+='<button class="bsm ol" style="white-space:nowrap;border-color:#2563eb;color:#2563eb;background:#eff6ff">On Duty ('+oc+')</button>';
+h+='<button class="bsm ol" style="white-space:nowrap;border-color:#d97706;color:#d97706;background:var(--acl)">Service ('+sc+')</button></div>';
+h+='<div class="ai3" style="display:flex;flex-direction:column;gap:8px">';
+for(var i=0;i<D.cars.length;i++){var c=D.cars[i];var st=c.status==='available'?'gn':c.status==='on-duty'?'bl':'am';var stl=c.status==='on-duty'?'On Duty':c.status==='service'?'Service':'Available';
+h+='<div class="cd" style="cursor:pointer;animation:fiu .3s ease '+i*0.05+'s forwards;opacity:0" onclick="S._viewCarId='+c.id+';nav(\'carDetailOwn\')"><div style="display:flex;gap:12px;align-items:center"><img src="'+c.img+'" style="width:56px;height:40px;border-radius:8px;object-fit:cover"><div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:700;color:var(--tx)">'+c.make+' '+c.model+'</div><div style="font-size:11px;color:var(--tm)">'+c.plate+' \u00B7 '+c.year+' \u00B7 '+c.fuel+'</div></div><div style="text-align:right"><span class="bg '+st+'">'+stl+'</span><div style="font-size:11px;font-weight:700;color:var(--p);margin-top:4px">'+c.driverPct+'% drv</div></div></div></div>';}
+h+='</div></div>';
+return h;
+}
+
+/* --- CAR DETAIL (OWNER) --- */
+function rCarOwn(){
+var c=getCar(S._viewCarId);if(!c)return'<div style="padding:60px 20px;text-align:center;color:var(--tm)">Car not found</div>';
+var duty=null;for(var j=0;j<D.dutyHistory.length;j++){if(D.dutyHistory[j].carId===c.id&&D.dutyHistory[j].status==='pending'){duty=D.dutyHistory[j];break}}
+var drv=duty?getDriver(duty.driverId):null;
+var carDuties=[];for(var i=0;i<D.dutyHistory.length;i++){if(D.dutyHistory[i].carId===c.id)carDuties.push(D.dutyHistory[i])}
+var totalRev=0,totalOwner=0;for(var i=0;i<carDuties.length;i++){totalRev+=carDuties[i].totalEarnings;totalOwner+=carDuties[i].ownerShare}
+var st=c.status==='available'?'gn':c.status==='on-duty'?'bl':'am';var stl=c.status==='on-duty'?'On Duty':c.status==='service'?'Service':'Available';
+var h='<div style="padding:8px 20px 100px"><div class="ai" style="display:flex;align-items:center;gap:12px;margin-bottom:16px"><button onclick="back()" style="background:none;border:none;cursor:pointer"><span class="material-icons-round" style="font-size:24px;color:var(--tx)">arrow_back</span></button><h2 style="font-size:18px;font-weight:900;color:var(--tx)">'+c.make+' '+c.model+'</h2></div>';
+h+='<div class="ai2"><img src="'+c.img+'" style="width:100%;height:160px;border-radius:16px;object-fit:cover;margin-bottom:16px" alt="">';
+h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><div style="font-size:11px;color:var(--tm)">'+c.plate+' \u00B7 '+c.year+' \u00B7 '+c.color+' \u00B7 '+c.fuel+'</div><span class="bg '+st+'">'+stl+'</span></div>';
+if(c.status==='on-duty'&&drv){
+h+='<div class="cd" style="margin-bottom:16px;background:var(--pbg);border-color:var(--psf)"><div style="display:flex;gap:12px;align-items:center;margin-bottom:12px"><div class="avc" style="background:'+drv.clr+'">'+drv.ini+'</div><div><div style="font-size:14px;font-weight:700;color:var(--tx)">'+drv.name+'</div><div style="font-size:11px;color:var(--tm)">Currently driving this car</div></div></div>';
+if(duty)h+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px"><div style="text-align:center;padding:8px;background:rgba(255,255,255,.7);border-radius:8px"><div style="font-size:16px;font-weight:800;color:var(--tx)">'+duty.trips.length+'</div><div style="font-size:9px;color:var(--tm)">Trips</div></div><div style="text-align:center;padding:8px;background:rgba(255,255,255,.7);border-radius:8px"><div style="font-size:16px;font-weight:800;color:var(--tx)">'+fmt(duty.totalEarnings)+'</div><div style="font-size:9px;color:var(--tm)">Earned</div></div><div style="text-align:center;padding:8px;background:rgba(255,255,255,.7);border-radius:8px"><div style="font-size:16px;font-weight:800;color:var(--p)">'+fmt(duty.ownerShare)+'</div><div style="font-size:9px;color:var(--tm)">Your Share</div></div></div><div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--psf);font-size:12px;color:var(--t2)">Start: '+duty.startKm+' km \u00B7 Fuel: '+duty.startFuel+'%</div>';
+h+='</div>';}
+h+='<div class="cd" style="margin-bottom:16px"><h4 style="font-size:13px;font-weight:700;color:var(--tx);margin-bottom:10px">Car Statistics</h4><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><div style="padding:10px;background:var(--pbg);border-radius:10px;text-align:center"><div style="font-size:16px;font-weight:800;color:var(--tx)">'+carDuties.length+'</div><div style="font-size:10px;color:var(--tm)">Duty Days</div></div><div style="padding:10px;background:var(--pbg);border-radius:10px;text-align:center"><div style="font-size:16px;font-weight:800;color:var(--p)">'+fmt(totalRev)+'</div><div style="font-size:10px;color:var(--tm)">Total Revenue</div></div><div style="padding:10px;background:var(--pbg);border-radius:10px;text-align:center"><div style="font-size:16px;font-weight:800;color:var(--tx)">'+fmt(totalOwner)+'</div><div style="font-size:10px;color:var(--tm)">Your Profit</div></div><div style="padding:10px;background:var(--pbg);border-radius:10px;text-align:center"><div style="font-size:16px;font-weight:800;color:var(--tx)">'+c.driverPct+'%</div><div style="font-size:10px;color:var(--tm)">Driver Share</div></div></div></div>';
+h+='<div style="display:flex;gap:10px;margin-bottom:16px"><button class="bs" style="flex:1" onclick="S._viewCarId='+c.id+';nav(\'carSettings\')"><span class="material-icons-round" style="font-size:16px;vertical-align:middle">tune</span> Settings</button><button class="bs" style="flex:1" onclick="S._viewCarId='+c.id+';nav(\'serviceManage\')"><span class="material-icons-round" style="font-size:16px;vertical-align:middle">build</span> Service</button></div>';
+if(carDuties.length>0){h+='<div><h4 style="font-size:13px;font-weight:700;color:var(--tx);margin-bottom:10px">Duty History</h4>';for(var i=0;i<carDuties.length;i++){var d=carDuties[i];var dr=getDriver(d.driverId);h+='<div class="cd" style="margin-bottom:8px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><div style="font-size:12px;font-weight:600;color:var(--tx)">'+d.date+' \u00B7 '+(dr?dr.name:'Driver')+'</div><span class="bg '+(d.status==='settled'?'gn':'am')+'">'+d.status+'</span></div><div style="display:flex;justify-content:space-between;font-size:11px;color:var(--t2)"><span>Earned: '+fmt(d.totalEarnings)+' \u00B7 Your: '+fmt(d.ownerShare)+'</span><span>Drv Net: <b style="color:'+(d.driverNet>=0?'var(--p)':'var(--dn)')+'">'+fmt(d.driverNet)+'</b></span></div></div>'}h+='</div>';}
+h+='</div></div>';
+return h;
+}
+
+/* --- ADD CAR --- */
+function rAddCar(){return'<div style="padding:8px 20px 100px"><div class="ai" style="display:flex;align-items:center;gap:12px;margin-bottom:20px"><button onclick="back()" style="background:none;border:none;cursor:pointer"><span class="material-icons-round" style="font-size:24px;color:var(--tx)">arrow_back</span></button><h2 style="font-size:20px;font-weight:900;color:var(--tx)">Add New Car</h2></div><div class="ai2"><div style="width:100%;height:120px;background:var(--pbg);border:2px dashed var(--psf);border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;margin-bottom:20px;cursor:pointer"><span class="material-icons-round" style="font-size:32px;color:var(--p);margin-bottom:4px">add_a_photo</span><span style="font-size:12px;font-weight:600;color:var(--pd)">Upload Photo</span></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px"><div class="ig"><label>Make</label><input type="text" placeholder="Toyota"><span class="material-icons-round ii">directions_car</span></div><div class="ig"><label>Model</label><input type="text" placeholder="Camry"><span class="material-icons-round ii">time_to_leave</span></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px"><div class="ig"><label>Year</label><input type="number" placeholder="2024"><span class="material-icons-round ii">calendar_today</span></div><div class="ig"><label>Color</label><input type="text" placeholder="White"><span class="material-icons-round ii">palette</span></div></div><div class="ig"><label>Registration Number</label><input type="text" placeholder="KA 01 AB 1234"><span class="material-icons-round ii">badge</span></div><div class="ig"><label>Fuel Type</label><select><option>Petrol</option><option>Diesel</option><option>CNG</option><option>Electric</option></select><span class="material-icons-round ii">expand_more</span></div><div class="ig"><label>Driver Salary Percentage (%)</label><input type="number" id="acPct" placeholder="e.g. 35" value="35" min="0" max="100"><span class="material-icons-round ii">percent</span></div><div style="padding:12px;background:var(--pbg);border-radius:12px;border:1px solid var(--psf);margin-bottom:20px;display:flex;gap:8px;align-items:flex-start"><span class="material-icons-round" style="font-size:18px;color:var(--p)">info</span><div style="font-size:12px;color:var(--pd);line-height:1.5">Driver gets <b>35%</b> of total trip earnings. Fuel and expenses are deducted from driver\'s share. You keep <b>65%</b>.</div></div><button class="bp" onclick="doAddCar()">ADD VEHICLE</button></div></div>'}
+function doAddCar(){
+var mk=document.querySelector('#sA input[placeholder="Toyota"],#sB input[placeholder="Toyota"]');
+var md=document.querySelector('#sA input[placeholder="Camry"],#sB input[placeholder="Camry"]');
+var yr=document.querySelector('#sA input[placeholder="2024"],#sB input[placeholder="2024"]');
+var cl=document.querySelector('#sA input[placeholder="White"],#sB input[placeholder="White"]');
+var pl=document.querySelector('#sA input[placeholder="KA 01 AB 1234"],#sB input[placeholder="KA 01 AB 1234"]');
+var ft=document.querySelector('#sA select,#sB select');
+var pct=document.getElementById('acPct');
+if(!mk||!mk.value||!md||!md.value||!pl||!pl.value){toast('Fill all required fields','er');return}
+toast('Adding car...','in');
+apiCall('addCar',{make:mk.value,model:md.value,year:yr?yr.value:'',plate:pl.value,color:cl?cl.value:'',fuel:ft?ft.value:'Petrol',driverPct:pct?parseInt(pct.value):35,addedBy:S.user?S.user.id:''}).then(function(r){
+if(!r.success){toast(r.error||'Failed','er');return}
+return loadData();
+}).then(function(){toast('Vehicle added!','ok');back()});
+}
+
+/* --- CAR SETTINGS --- */
+function rCarSet(){var c=getCar(S._viewCarId);if(!c)return'';return'<div style="padding:8px 20px 100px"><div class="ai" style="display:flex;align-items:center;gap:12px;margin-bottom:20px"><button onclick="back()" style="background:none;border:none;cursor:pointer"><span class="material-icons-round" style="font-size:24px;color:var(--tx)">arrow_back</span></button><h2 style="font-size:20px;font-weight:900;color:var(--tx)">Car Settings</h2></div><div class="ai2"><div class="cd" style="margin-bottom:16px;display:flex;gap:12px;align-items:center"><img src="'+c.img+'" style="width:56px;height:40px;border-radius:8px;object-fit:cover"><div><div style="font-size:15px;font-weight:700;color:var(--tx)">'+c.make+' '+c.model+'</div><div style="font-size:12px;color:var(--tm)">'+c.plate+'</div></div></div><div class="ig"><label>Driver Salary Percentage (%)</label><input type="number" id="csPct" value="'+c.driverPct+'" min="0" max="100" oninput="document.getElementById(\'csDv\').textContent=this.value+\'%\';document.getElementById(\'csOv\').textContent=(100-parseInt(this.value)||0)+\'%\'"><span class="material-icons-round ii">percent</span></div><div class="cd" style="margin-bottom:20px;background:var(--pbg);border-color:var(--psf)"><h4 style="font-size:12px;font-weight:700;color:var(--tx);margin-bottom:8px">Salary Split Preview</h4><div style="display:flex;align-items:center;gap:10px;margin-bottom:8px"><div style="width:10px;height:10px;background:var(--p);border-radius:3px"></div><span style="font-size:12px;color:var(--t2)">Driver: <b id="csDv">'+c.driverPct+'%</b></span></div><div style="display:flex;align-items:center;gap:10px"><div style="width:10px;height:10px;background:var(--ac);border-radius:3px"></div><span style="font-size:12px;color:var(--t2)">Owner: <b id="csOv">'+(100-c.driverPct)+'%</b></span></div><div class="pb" style="margin-top:10px;height:10px;border-radius:5px;overflow:hidden;display:flex"><div id="csBarD" style="width:'+c.driverPct+'%;background:var(--p);transition:width .3s"></div><div id="csBarO" style="width:'+(100-c.driverPct)+'%;background:var(--ac);transition:width .3s"></div></div></div><button class="bp" onclick="doCarSet('+c.id+')">SAVE SETTINGS</button></div></div>'}
+function doCarSet(id){var c=getCar(id),p=parseInt(document.getElementById('csPct').value);if(!p||p<0||p>100){toast('Invalid percentage','er');return}
+toast('Saving...','in');
+apiCall('updateCar',{id:id,driverPct:p}).then(function(r){
+if(!r.success){toast(r.error||'Failed','er');return}
+return loadData();
+}).then(function(){toast('Settings saved!','ok');back()});
+}
+
+/* --- SERVICE MANAGE --- */
+function rServiceManage(){var h='<div style="padding:8px 20px 100px"><div class="ai" style="display:flex;align-items:center;gap:12px;margin-bottom:20px"><button onclick="back()" style="background:none;border:none;cursor:pointer"><span class="material-icons-round" style="font-size:24px;color:var(--tx)">arrow_back</span></button><h2 style="font-size:20px;font-weight:900;color:var(--tx)">Service Management</h2></div><div class="ai2"><div class="ig"><label>Select Car</label><select id="smCar">';
+for(var i=0;i<D.cars.length;i++){var c=D.cars[i];h+='<option value="'+c.id+'"'+(S._viewCarId===c.id?' selected':'')+'>'+c.make+' '+c.model+' \u2014 '+c.plate+' ('+c.status+')</option>';}
+h+='</select><span class="material-icons-round ii">expand_more</span></div><div class="ig"><label>Service Type</label><select id="smType"><option>Full Service</option><option>Oil Change</option><option>Tire Change</option><option>Brake Repair</option><option>Engine Work</option><option>Body Work</option><option>Other</option></select><span class="material-icons-round ii">build</span></div><div class="ig"><label>Estimated Cost (Rs.)</label><input type="number" id="smCost" placeholder="e.g. 3500"><span class="material-icons-round ii">currency_rupee</span></div><div class="ig"><label>Notes</label><input type="text" id="smNotes" placeholder="Describe the issue"><span class="material-icons-round ii">description</span></div><div style="padding:12px;background:var(--acl);border-radius:12px;border:1px solid #fde68a;margin-bottom:20px;display:flex;gap:8px;align-items:flex-start"><span class="material-icons-round" style="font-size:18px;color:#d97706">warning</span><div style="font-size:12px;color:#92400e;line-height:1.5">Marking a car as "Service" will <b>remove it from available cars</b>. Drivers cannot select this car until you set it back to "Available".</div></div><div style="display:flex;gap:10px"><button class="bs" style="flex:1" onclick="doService(\'service\')">SEND TO SERVICE</button><button class="bp" style="flex:1" onclick="doService(\'available\')">SET AS AVAILABLE</button></div></div></div>';return h}
+function doService(status){var id=parseInt(document.getElementById('smCar').value),c=getCar(id);if(!c)return;if(status==='service'&&c.status==='on-duty'){toast('Cannot service car while on duty!','er');return}
+toast('Updating...','in');
+apiCall('updateCarStatus',{id:id,status:status}).then(function(r){
+if(!r.success){toast(r.error||'Failed','er');return}
+return loadData();
+}).then(function(){toast(c.make+' '+c.model+(status==='service'?' sent to service':' set as available'),'ok');back()});
+}
+
+/* --- DRIVER LIST (OWNER) --- */
+function rDrvList(){var h='<div style="padding:8px 20px 100px"><div class="ai" style="margin-bottom:16px"><h2 style="font-size:22px;font-weight:900;color:var(--tx)">Drivers</h2></div><div class="ai2" style="display:flex;flex-direction:column;gap:8px">';
+for(var i=0;i<D.drivers.length;i++){var d=D.drivers[i];var pending=[];for(var j=0;j<D.dutyHistory.length;j++){if(D.dutyHistory[j].driverId===d.id&&D.dutyHistory[j].status==='pending')pending.push(D.dutyHistory[j])}var pendingAmt=0;for(var j=0;j<pending.length;j++)pendingAmt+=pending[j].driverNet;
+h+='<div class="cd" style="cursor:pointer;animation:fiu .3s ease '+i*0.05+'s forwards;opacity:0" onclick="S._viewDrvId='+d.id+';nav(\'drvDetailOwn\')"><div style="display:flex;gap:12px;align-items:center;margin-bottom:10px"><div class="avc" style="background:'+d.clr+'">'+d.ini+'</div><div style="flex:1"><div style="display:flex;justify-content:space-between;align-items:center"><div style="font-size:14px;font-weight:700;color:var(--tx)">'+d.name+'</div><span class="bg '+(d.status==='active'?'gn':'gy')+'">'+d.status+'</span></div><div style="font-size:11px;color:var(--tm);margin-top:2px">'+d.phone+'</div></div></div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px"><div style="text-align:center;padding:8px;background:var(--pbg);border-radius:8px"><div style="display:flex;align-items:center;justify-content:center;gap:2px"><span class="material-icons-round" style="font-size:12px;color:var(--ac)">star</span><span style="font-size:14px;font-weight:800;color:var(--tx)">'+d.rating+'</span></div><div style="font-size:9px;color:var(--tm)">Rating</div></div><div style="text-align:center;padding:8px;background:var(--pbg);border-radius:8px"><div style="font-size:14px;font-weight:800;color:var(--tx)">'+d.totalTrips+'</div><div style="font-size:9px;color:var(--tm)">Trips</div></div><div style="text-align:center;padding:8px;background:'+(pendingAmt>0?'var(--acl)':'var(--pbg)')+';border-radius:8px"><div style="font-size:14px;font-weight:800;color:'+(pendingAmt>0?'#d97706':'var(--tx)')+'">'+fmt(d.balance)+'</div><div style="font-size:9px;color:var(--tm)">Balance</div></div></div>';
+if(pending.length>0)h+='<div style="margin-top:10px;padding:8px;background:var(--acl);border-radius:8px;font-size:11px;color:#92400e;font-weight:600">'+pending.length+' settlement(s) pending \u2014 '+fmt(pendingAmt)+'</div>';
+h+='</div>';}
+h+='</div></div>';
+return h;
+}
+
+/* --- DRIVER DETAIL (OWNER) --- */
+function rDrvOwn(){var d=getDriver(S._viewDrvId);if(!d)return'';var hist=[];for(var i=0;i<D.dutyHistory.length;i++){if(D.dutyHistory[i].driverId===d.id)hist.push(D.dutyHistory[i])}var pending=[];for(var i=0;i<hist.length;i++){if(hist[i].status==='pending')pending.push(hist[i])}var pendingNet=0;for(var i=0;i<pending.length;i++)pendingNet+=pending[i].driverNet;
+var h='<div style="padding:8px 20px 100px"><div class="ai" style="display:flex;align-items:center;gap:12px;margin-bottom:20px"><button onclick="back()" style="background:none;border:none;cursor:pointer"><span class="material-icons-round" style="font-size:24px;color:var(--tx)">arrow_back</span></button><h2 style="font-size:20px;font-weight:900;color:var(--tx)">'+d.name+'</h2></div>';
+h+='<div class="ai2"><div style="text-align:center;margin-bottom:20px"><div class="avc" style="background:'+d.clr+';width:64px;height:64px;font-size:24px;border-radius:20px;margin:0 auto 10px">'+d.ini+'</div><div style="font-size:13px;color:var(--tm)">'+d.phone+' \u00B7 '+d.license+'</div></div>';
+h+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;margin-bottom:20px"><div class="cd" style="text-align:center;padding:10px 4px"><div style="font-size:16px;font-weight:800;color:var(--tx)">'+d.totalTrips+'</div><div style="font-size:9px;color:var(--tm)">Trips</div></div><div class="cd" style="text-align:center;padding:10px 4px"><div style="font-size:16px;font-weight:800;color:var(--p)">'+fmt(d.totalEarnings)+'</div><div style="font-size:9px;color:var(--tm)">Earned</div></div><div class="cd" style="text-align:center;padding:10px 4px"><div style="font-size:16px;font-weight:800;color:var(--tx)">'+d.rating+'</div><div style="font-size:9px;color:var(--tm)">Rating</div></div><div class="cd" style="text-align:center;padding:10px 4px"><div style="font-size:16px;font-weight:800;color:'+(d.balance>0?'#d97706':'var(--tx)')+'">'+fmt(d.balance)+'</div><div style="font-size:9px;color:var(--tm)">Balance</div></div></div>';
+if(pending.length>0)h+='<div class="cd" style="margin-bottom:16px;background:var(--acl);border-color:#fde68a;cursor:pointer" onclick="S._settleDrvId='+d.id+';nav(\'settleDriver\')"><div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-size:14px;font-weight:700;color:#92400e">'+pending.length+' Pending Settlement(s)</div><div style="font-size:12px;color:#a16207">Total driver net: '+fmt(pendingNet)+'</div></div><button class="bsm g" style="background:#92400e">Settle</button></div></div>';
+h+='<div style="display:flex;gap:10px;margin-bottom:16px"><button class="bs" style="flex:1" onclick="S._giveAdvDrvId='+d.id+';nav(\'giveAdvance\')"><span class="material-icons-round" style="font-size:16px;vertical-align:middle">payments</span> Give Advance</button><button class="bs" style="flex:1" onclick="nav(\'advanceHistory\')"><span class="material-icons-round" style="font-size:16px;vertical-align:middle">history</span> Advance History</button></div>';
+h+='<div><h4 style="font-size:13px;font-weight:700;color:var(--tx);margin-bottom:10px">Duty History</h4>';
+for(var i=0;i<hist.length;i++){var dh=hist[i];var c=getCar(dh.carId);h+='<div class="cd" style="margin-bottom:8px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><div style="font-size:12px;font-weight:600;color:var(--tx)">'+dh.date+' \u00B7 '+(c?c.make+' '+c.model:'')+'</div><span class="bg '+(dh.status==='settled'?'gn':'am')+'">'+dh.status+'</span></div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;font-size:11px"><div><span style="color:var(--tm)">Earned:</span> <b style="color:var(--tx)">'+fmt(dh.totalEarnings)+'</b></div><div><span style="color:var(--tm)">Your:</span> <b style="color:var(--p)">'+fmt(dh.ownerShare)+'</b></div><div><span style="color:var(--tm)">Drv Net:</span> <b style="color:'+(dh.driverNet>=0?'var(--p)':'var(--dn)')+'">'+fmt(dh.driverNet)+'</b></div></div></div>';}
+h+='</div></div></div>';
+return h;
+}
+
+/* --- SETTLE DRIVER --- */
+function rSettle(){var d=getDriver(S._settleDrvId);if(!d)return'';var pending=[];for(var i=0;i<D.dutyHistory.length;i++){if(D.dutyHistory[i].driverId===d.id&&D.dutyHistory[i].status==='pending')pending.push(D.dutyHistory[i])}var totalNet=0;for(var i=0;i<pending.length;i++)totalNet+=pending[i].driverNet;
+var h='<div style="padding:8px 20px 100px"><div class="ai" style="display:flex;align-items:center;gap:12px;margin-bottom:20px"><button onclick="back()" style="background:none;border:none;cursor:pointer"><span class="material-icons-round" style="font-size:24px;color:var(--tx)">arrow_back</span></button><h2 style="font-size:20px;font-weight:900;color:var(--tx)">Settle</h2></div>';
+h+='<div class="ai2"><div class="cd" style="margin-bottom:16px;display:flex;gap:12px;align-items:center"><div class="avc" style="background:'+d.clr+'">'+d.ini+'</div><div><div style="font-size:15px;font-weight:700;color:var(--tx)">'+d.name+'</div><div style="font-size:12px;color:var(--tm)">'+pending.length+' duty report(s)</div></div></div>';
+h+='<div class="cd" style="margin-bottom:16px"><h4 style="font-size:13px;font-weight:700;color:var(--tx);margin-bottom:10px">Breakdown</h4>';
+for(var i=0;i<pending.length;i++){var dh=pending[i];var c=getCar(dh.carId);h+='<div style="padding:10px 0;border-bottom:1px solid #f1f5f9"><div style="font-size:12px;font-weight:600;color:var(--tx);margin-bottom:4px">'+dh.date+' \u2014 '+(c?c.make+' '+c.model:'')+'</div><div style="display:flex;gap:16px;font-size:11px;color:var(--t2)"><span>Earned: '+fmt(dh.totalEarnings)+'</span><span>Your: '+fmt(dh.ownerShare)+'</span><span>Drv: '+fmt(dh.driverNet)+'</span></div></div>';}
+h+='<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;margin-top:4px;border-top:2px solid var(--tx)"><span style="font-size:15px;font-weight:800;color:var(--tx)">Total to Settle</span><span style="font-size:22px;font-weight:900;color:'+(totalNet>=0?'var(--p)':'var(--dn)')+'">'+fmt(totalNet)+'</span></div></div>';
+h+='<div class="ig"><label>Settlement Amount (Rs.)</label><input type="number" id="stAmt" value="'+Math.max(0,totalNet)+'" placeholder="Enter amount"><span class="material-icons-round ii">currency_rupee</span></div><div class="ig"><label>Payment Method</label><select id="stMethod"><option>Cash</option><option>Bank Transfer</option><option>UPI</option></select><span class="material-icons-round ii">payment</span></div><div class="ig"><label>Notes (optional)</label><input type="text" id="stNotes" placeholder="Any remarks"><span class="material-icons-round ii">description</span></div>';
+h+='<button class="bp" onclick="doSettle()">SETTLE WITH DRIVER</button></div></div>';
+return h;
+}
+function doSettle(){var d=getDriver(S._settleDrvId),amt=parseFloat(document.getElementById('stAmt').value);if(isNaN(amt)){toast('Enter amount','er');return}
+var notes=document.getElementById('stNotes');
+toast('Settling...','in');
+apiCall('settle',{driverId:d.id,amount:amt,notes:notes?notes.value:''}).then(function(r){
+if(!r.success){toast(r.error||'Failed','er');return}
+return loadData();
+}).then(function(){toast('Settled '+fmt(amt)+' with '+d.name,'ok');setTimeout(function(){back()},400)});
+}
+
+/* --- REVENUE (OWNER) — FIXED NAME --- */
+function rRevenueOwner(){
+var totalRev=0,totalOwner=0,totalDrv=0,totalExp=0;
+for(var i=0;i<D.dutyHistory.length;i++){var d=D.dutyHistory[i];totalRev+=d.totalEarnings;totalOwner+=d.ownerShare;totalDrv+=d.driverGross;totalExp+=d.fuelCost+d.expenses+d.fines}
+var h='<div style="padding:8px 20px 100px"><div class="ai" style="margin-bottom:20px"><h2 style="font-size:22px;font-weight:900;color:var(--tx)">Revenue</h2></div>';
+h+='<div class="ai2 cd" style="margin-bottom:16px;background:linear-gradient(135deg,var(--pdp),var(--pd));border:none;color:#fff;padding:20px"><div style="font-size:12px;color:var(--plr);margin-bottom:4px">Total Revenue</div><div style="font-size:32px;font-weight:900;margin-bottom:16px">'+fmt(totalRev)+'</div><div style="display:flex;gap:20px"><div><div style="font-size:18px;font-weight:800">'+fmt(totalOwner)+'</div><div style="font-size:10px;color:var(--plr)">Your Profit</div></div><div><div style="font-size:18px;font-weight:800">'+fmt(totalDrv)+'</div><div style="font-size:10px;color:var(--plr)">Driver Payout</div></div><div><div style="font-size:18px;font-weight:800">'+fmt(totalExp)+'</div><div style="font-size:10px;color:var(--plr)">Expenses</div></div></div></div>';
+h+='<div class="ai3" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px"><div class="cd"><div style="font-size:11px;color:var(--tm);margin-bottom:4px">Profit Margin</div><div style="font-size:20px;font-weight:800;color:var(--p)">'+(totalRev>0?Math.round(totalOwner/totalRev*100):0)+'%</div></div><div class="cd"><div style="font-size:11px;color:var(--tm);margin-bottom:4px">Total Duties</div><div style="font-size:20px;font-weight:800;color:var(--tx)">'+D.dutyHistory.length+'</div></div></div>';
+h+='<div class="ai3"><h4 style="font-size:13px;font-weight:700;color:var(--tx);margin-bottom:10px">Per Car Revenue</h4><div class="cd">';
+for(var i=0;i<D.cars.length;i++){var c=D.cars[i];var cd=[];for(var j=0;j<D.dutyHistory.length;j++){if(D.dutyHistory[j].carId===c.id)cd.push(D.dutyHistory[j])}var rev=0,own=0;for(var j=0;j<cd.length;j++){rev+=cd[j].totalEarnings;own+=cd[j].ownerShare}var pct=totalRev>0?Math.round(rev/totalRev*100):0;
+h+='<div style="margin-bottom:14px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><span style="font-size:12px;font-weight:600;color:var(--tx)">'+c.make+' '+c.model+' <span style="color:var(--tm)">('+c.driverPct+'% drv)</span></span><span style="font-size:13px;font-weight:700;color:var(--p)">'+fmt(own)+' <span style="font-size:10px;color:var(--tm)">/ '+fmt(rev)+'</span></span></div><div class="pb"><div class="fl" style="width:'+pct+'%"></div></div></div>';}
+h+='</div></div></div>';
+return h;
+}
+
+/* ============ ADVANCE & TRANSACTION SCREENS ============ */
+
+/* --- GIVE ADVANCE (OWNER) --- */
+function rGiveAdvance(){
+var d=getDriver(S._giveAdvDrvId);if(!d)return'';
+var h='<div style="padding:8px 20px 100px"><div class="ai" style="display:flex;align-items:center;gap:12px;margin-bottom:20px"><button onclick="back()" style="background:none;border:none;cursor:pointer"><span class="material-icons-round" style="font-size:24px;color:var(--tx)">arrow_back</span></button><h2 style="font-size:20px;font-weight:900;color:var(--tx)">Give Advance</h2></div>';
+h+='<div class="ai2"><div class="cd" style="margin-bottom:16px;display:flex;gap:12px;align-items:center"><div class="avc" style="background:'+d.clr+'">'+d.ini+'</div><div><div style="font-size:15px;font-weight:700;color:var(--tx)">'+d.name+'</div><div style="font-size:12px;color:var(--tm)">Current balance: <b style="color:#d97706">'+fmt(d.balance)+'</b></div></div></div>';
+h+='<div class="ig"><label>Advance Amount (Rs.)</label><input type="number" id="gaAmt" placeholder="e.g. 2000" min="1"><span class="material-icons-round ii">currency_rupee</span></div>';
+h+='<div class="ig"><label>Reason / Description</label><input type="text" id="gaDesc" placeholder="e.g. Fuel advance for this week"><span class="material-icons-round ii">description</span></div>';
+h+='<div style="padding:12px;background:var(--acl);border-radius:12px;border:1px solid #fde68a;margin-bottom:20px;display:flex;gap:8px;align-items:flex-start"><span class="material-icons-round" style="font-size:18px;color:#d97706">info</span><div style="font-size:12px;color:#92400e;line-height:1.5">Advance will be added to driver\'s balance and <b>deducted during settlement</b>.</div></div>';
+h+='<button class="bp" onclick="doGiveAdvance()">GIVE ADVANCE</button></div></div>';
+return h;
+}
+function doGiveAdvance(){
+var d=getDriver(S._giveAdvDrvId);if(!d)return;
+var amt=parseFloat(document.getElementById('gaAmt').value);
+var desc=document.getElementById('gaDesc').value||'Advance given';
+if(!amt||amt<=0){toast('Enter valid amount','er');return}
+toast('Giving advance...','in');
+apiCall('giveAdvance',{driverId:d.id,amount:amt,desc:desc}).then(function(r){
+if(!r.success){toast(r.error||'Failed','er');return}
+return loadData();
+}).then(function(){toast('Advance '+fmt(amt)+' given to '+d.name,'ok');setTimeout(function(){back()},400)});
+}
+
+/* --- ADVANCE HISTORY --- */
+function rAdvanceHistory(){
+var isDriver=S.role==='driver';
+var drvId=isDriver?(S.user?S.user.id:1):null;
+var h='<div style="padding:8px 20px 100px"><div class="ai" style="margin-bottom:20px"><h2 style="font-size:22px;font-weight:900;color:var(--tx)">Advance History</h2></div>';
+var totalAdv=0;
+h+='<div class="ai2" style="display:flex;flex-direction:column;gap:8px">';
+var found=false;
+for(var i=0;i<D.advances.length;i++){var a=D.advances[i];
+if(isDriver&&a.driverId!==drvId)continue;
+var drv=getDriver(a.driverId);
+found=true;
+totalAdv+=a.amount;
+h+='<div class="cd" style="animation:fiu .3s ease '+i*0.05+'s forwards;opacity:0"><div style="display:flex;gap:12px;align-items:center;margin-bottom:8px"><div style="width:40px;height:40px;background:var(--acl);border-radius:10px;display:flex;align-items:center;justify-content:center"><span class="material-icons-round" style="font-size:20px;color:#d97706">payments</span></div><div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--tx)">'+(isDriver?'Owner':' '+drv.name)+'</div><div style="font-size:11px;color:var(--tm)">'+a.desc+'</div></div><div style="text-align:right"><div style="font-size:14px;font-weight:800;color:#d97706">-'+fmt(a.amount)+'</div><div style="font-size:10px;color:var(--tm)">'+a.date+'</div></div></div></div>';
+}
+if(!found)h+='<div class="cd" style="text-align:center;padding:32px;color:var(--tm)"><span class="material-icons-round" style="font-size:40px;color:var(--bd);display:block;margin-bottom:10px">receipt_long</span><p style="font-size:14px;font-weight:600">No advances yet</p></div>';
+h+='</div></div>';
+return h;
+}
+
+/* --- RECENT ACTIVITY --- */
+function rRecentActivity(){
+var isDriver=S.role==='driver';
+var drvId=isDriver?(S.user?S.user.id:1):null;
+var h='<div style="padding:8px 20px 100px"><div class="ai" style="margin-bottom:20px"><h2 style="font-size:22px;font-weight:900;color:var(--tx)">Recent Activity</h2></div>';
+h+='<div class="ai2" style="display:flex;flex-direction:column;gap:8px">';
+var found=false;
+for(var i=0;i<D.transactions.length;i++){var t=D.transactions[i];
+if(isDriver&&t.driverId!==drvId)continue;
+found=true;
+var ic=t.type==='settlement'?'account_balance_wallet':t.type==='earning'?'trending_up':t.type==='advance'?'payments':'receipt_long';
+var bgc=t.type==='settlement'?'var(--pbg)':t.type==='earning'?'var(--pbg)':t.type==='advance'?'var(--acl)':'var(--dnl)';
+var icl=t.type==='settlement'?'var(--p)':t.type==='earning'?'var(--p)':t.type==='advance'?'#d97706':'var(--dn)';
+var amtColor=t.amount>=0?'var(--p)':'var(--dn)';
+h+='<div class="cd" style="animation:fiu .3s ease '+i*0.04+'s forwards;opacity:0"><div style="display:flex;gap:12px;align-items:center"><div style="width:40px;height:40px;background:'+bgc+';border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><span class="material-icons-round" style="font-size:20px;color:'+icl+'">'+ic+'</span></div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700;color:var(--tx)">'+t.desc+'</div><div style="font-size:11px;color:var(--tm)">'+t.date+' \u00B7 '+t.type.charAt(0).toUpperCase()+t.type.slice(1)+'</div></div><div style="font-size:14px;font-weight:800;color:'+amtColor+'">'+(t.amount>=0?'+':'')+fmt(Math.abs(t.amount))+'</div></div></div>';
+}
+if(!found)h+='<div class="cd" style="text-align:center;padding:32px;color:var(--tm)"><span class="material-icons-round" style="font-size:40px;color:var(--bd);display:block;margin-bottom:10px">history</span><p style="font-size:14px;font-weight:600">No activity yet</p></div>';
+h+='</div></div>';
+return h;
+}
+
+/* ============ INIT ============ */
+if(loadSession()){
+loadData().then(function(){nav(S.role==='driver'?'driverDash':'ownerDash',false)});
+}else{
+sA.innerHTML = rWelcome();
+}
+</script>
+</body>
+</html>
